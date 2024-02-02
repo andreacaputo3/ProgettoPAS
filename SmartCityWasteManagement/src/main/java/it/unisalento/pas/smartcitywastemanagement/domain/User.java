@@ -1,7 +1,11 @@
 package it.unisalento.pas.smartcitywastemanagement.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Document("users")
 public class User {
@@ -15,6 +19,8 @@ public class User {
     private String username;
     private String password;
     private String ruolo;
+    @DBRef
+    private List<Payment> payments = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -78,5 +84,13 @@ public class User {
 
     public void setRuolo(String ruolo) {
         this.ruolo = ruolo;
+    }
+
+    public List<Payment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(List<Payment> payments) {
+        this.payments = payments;
     }
 }

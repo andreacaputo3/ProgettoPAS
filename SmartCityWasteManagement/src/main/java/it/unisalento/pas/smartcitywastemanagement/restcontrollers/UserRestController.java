@@ -2,9 +2,12 @@ package it.unisalento.pas.smartcitywastemanagement.restcontrollers;
 
 import it.unisalento.pas.smartcitywastemanagement.domain.User;
 import it.unisalento.pas.smartcitywastemanagement.dto.LoginDTO;
+import it.unisalento.pas.smartcitywastemanagement.dto.PaymentDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserDTO;
+import it.unisalento.pas.smartcitywastemanagement.exceptions.UserNotFoundException;
 import it.unisalento.pas.smartcitywastemanagement.repositories.UserRepository;
 import it.unisalento.pas.smartcitywastemanagement.security.JwtUtilities;
+import it.unisalento.pas.smartcitywastemanagement.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,9 @@ public class UserRestController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -82,7 +88,11 @@ public class UserRestController {
     public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDTO) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
+                    new UsernamePasswordAuthenticationToken(
+                            loginDTO.getUsername(),
+                            loginDTO.getPassword()
+                    )
+            );
 
             User authenticatedUser = userRepository.findByUsername(authentication.getName());
 
@@ -90,10 +100,28 @@ public class UserRestController {
                 var jwtToken = jwtUtilities.generateToken(authenticatedUser.getUsername());
                 return new ResponseEntity<>(jwtToken, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("Login non riuscito", HttpStatus.UNAUTHORIZED);
+                throw new UserNotFoundException(loginDTO.getUsername());
             }
         } catch (AuthenticationException e) {
             return new ResponseEntity<>("Login non riuscito: credenziali non valide", HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @GetMapping("/{userId}/payments")
+    public ResponseEntity<List<PaymentDTO>> getUserPayments(@PathVariable String userId) {
+        List<PaymentDTO> paymentDTOs = paymentService.getPaymentsForUser(userId).stream()
+                .map(payment -> new PaymentDTO(payment.getId(), payment.getAmount(), payment.getPaymentDate(), payment.isPaid()))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(paymentDTOs, HttpStatus.OK);
+    }
+
+    @PostMapping("/payments/{paymentId}/pay")
+    public ResponseEntity<String> payPayment(@PathVariable String paymentId) {
+        boolean paymentStatus = paymentService.payPayment(paymentId);
+        if (paymentStatus) {
+            return new ResponseEntity<>("Pagamento effettuato con successo", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Pagamento non riuscito", HttpStatus.BAD_REQUEST);
         }
     }
 
