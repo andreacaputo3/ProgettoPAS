@@ -92,4 +92,5 @@ public class User {
     public void setAwared(Boolean awared) {
         isAwared = awared;
     }
+
 }

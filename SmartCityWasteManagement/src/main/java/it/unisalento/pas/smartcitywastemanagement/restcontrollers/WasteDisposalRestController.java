@@ -29,5 +29,6 @@ public class WasteDisposalRestController {
         wasteDisposalService.saveWasteDisposal(wasteDisposalDTO);
 
         return new ResponseEntity<>("Waste disposal submitted successfully", HttpStatus.OK);
+
     }
 }

@@ -6,9 +6,11 @@ import it.unisalento.pas.smartcitywastemanagement.dto.LoginDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.PaymentDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserWasteSeparationPerformanceDTO;
+import it.unisalento.pas.smartcitywastemanagement.exceptions.PaymentNotFoundException;
 import it.unisalento.pas.smartcitywastemanagement.exceptions.UserNotFoundException;
 import it.unisalento.pas.smartcitywastemanagement.repositories.UserRepository;
 import it.unisalento.pas.smartcitywastemanagement.security.JwtUtilities;
+import it.unisalento.pas.smartcitywastemanagement.service.CustomUserDetailsService;
 import it.unisalento.pas.smartcitywastemanagement.service.PaymentService;
 import it.unisalento.pas.smartcitywastemanagement.service.WasteDisposalService;
 import it.unisalento.pas.smartcitywastemanagement.service.WasteSeparationPerformanceService;
@@ -40,13 +42,14 @@ public class UserRestController {
     private WasteSeparationPerformanceService wasteSeparationPerformanceService;
 
     @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
     private JwtUtilities jwtUtilities;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
@@ -71,24 +74,13 @@ public class UserRestController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
-        if (userRepository.existsByUsername(userDTO.getUsername())) {
-            return new ResponseEntity<>("Username già in uso", HttpStatus.BAD_REQUEST);
+        try {
+            User registeredUser = customUserDetailsService.registerNewUser(userDTO);
+            var jwtToken = jwtUtilities.generateToken(registeredUser.getUsername());
+            return new ResponseEntity<>(jwtToken, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
-        User newUser = new User();
-        newUser.setNome(userDTO.getNome());
-        newUser.setCognome(userDTO.getCognome());
-        newUser.setEmail(userDTO.getEmail());
-        newUser.setEta(userDTO.getEta());
-        newUser.setUsername(userDTO.getUsername());
-        newUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        newUser.setRuolo(userDTO.getRuolo());
-
-        userRepository.save(newUser);
-
-        var jwtToken = jwtUtilities.generateToken(newUser.getUsername());
-
-        return new ResponseEntity<>(jwtToken, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

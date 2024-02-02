@@ -82,4 +82,5 @@ public class UserDTO {
     public void setAwared(Boolean awared) {
         isAwared = awared;
     }
+
 }

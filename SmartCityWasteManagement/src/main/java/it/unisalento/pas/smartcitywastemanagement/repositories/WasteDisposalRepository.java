@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface WasteDisposalRepository extends MongoRepository<WasteDisposal, String> {
     List<WasteDisposal> findByUserId(String userId);
+
+    List<WasteDisposal> findByBinId(String id);
     // Puoi definire qui eventuali metodi personalizzati se necessario
 }

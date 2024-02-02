@@ -16,7 +16,7 @@ public class BinService {
         Bin bin = new Bin();
         bin.setLocation(binDTO.getLocation());
         bin.setType(binDTO.getType());
-        bin.setFull(false); // Default a false quando viene creato un nuovo cassonetto
+        bin.setFull(false);
         bin.setMaxWeight(binDTO.getMaxWeight());
 
         return binRepository.save(bin);

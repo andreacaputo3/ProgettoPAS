@@ -33,5 +33,8 @@ public class PaymentService {
         return paymentRepository.findByUserId(userId);
     }
 
+    public List<Payment> getAllPayments() {
+        return paymentRepository.findAll();
+    }
 
 }
