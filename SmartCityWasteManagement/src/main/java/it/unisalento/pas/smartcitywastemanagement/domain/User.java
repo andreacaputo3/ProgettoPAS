@@ -19,8 +19,7 @@ public class User {
     private String username;
     private String password;
     private String ruolo;
-    @DBRef
-    private List<Payment> payments = new ArrayList<>();
+    private Boolean isAwared;
 
     public String getId() {
         return id;
@@ -86,11 +85,11 @@ public class User {
         this.ruolo = ruolo;
     }
 
-    public List<Payment> getPayments() {
-        return payments;
+    public Boolean getAwared() {
+        return isAwared;
     }
 
-    public void setPayments(List<Payment> payments) {
-        this.payments = payments;
+    public void setAwared(Boolean awared) {
+        isAwared = awared;
     }
 }

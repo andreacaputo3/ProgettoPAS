@@ -9,13 +9,7 @@ public class PaymentDTO {
     private BigDecimal amount;
     private Date paymentDate;
     private boolean paid;
-
-    public PaymentDTO(String id, BigDecimal amount, Date paymentDate, boolean paid) {
-        this.id = id;
-        this.amount = amount;
-        this.paymentDate = paymentDate;
-        this.paid = paid;
-    }
+    private String userId;
 
     public String getId() {
         return id;
@@ -49,4 +43,11 @@ public class PaymentDTO {
         this.paid = paid;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

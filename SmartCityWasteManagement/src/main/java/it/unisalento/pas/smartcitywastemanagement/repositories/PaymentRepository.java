@@ -6,6 +6,6 @@ import it.unisalento.pas.smartcitywastemanagement.domain.Payment;
 import java.util.List;
 
 public interface PaymentRepository extends MongoRepository<Payment, String> {
+    List<Payment> findByUserId(String userId);
 
-    List<Payment> findByUser_Id(String userId);
 }

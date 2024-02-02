@@ -3,6 +3,7 @@ package it.unisalento.pas.smartcitywastemanagement.domain;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,22 +13,11 @@ public class Payment {
 
     @Id
     private String id;
-
     private BigDecimal amount;
     private Date paymentDate;
     private boolean paid;
-
-    @DBRef
-    private User user;
-
-    public Payment() {
-    }
-
-    public Payment(BigDecimal amount, Date paymentDate, boolean paid) {
-        this.amount = amount;
-        this.paymentDate = paymentDate;
-        this.paid = paid;
-    }
+    @Field("userId")
+    private String userId;
 
     public String getId() {
         return id;
@@ -61,11 +51,11 @@ public class Payment {
         this.paid = paid;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(String usedId) {
+        this.userId = usedId;
     }
 }

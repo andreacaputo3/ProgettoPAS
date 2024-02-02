@@ -9,6 +9,7 @@ public class UserDTO {
     private String username;
     private String password;
     private String ruolo;
+    private Boolean isAwared;
 
     public String getUsername() {
         return username;
@@ -72,5 +73,13 @@ public class UserDTO {
 
     public void setRuolo(String ruolo) {
         this.ruolo = ruolo;
+    }
+
+    public Boolean getAwared() {
+        return isAwared;
+    }
+
+    public void setAwared(Boolean awared) {
+        isAwared = awared;
     }
 }

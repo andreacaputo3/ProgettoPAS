@@ -1,13 +1,17 @@
 package it.unisalento.pas.smartcitywastemanagement.restcontrollers;
 
+import it.unisalento.pas.smartcitywastemanagement.domain.Payment;
 import it.unisalento.pas.smartcitywastemanagement.domain.User;
 import it.unisalento.pas.smartcitywastemanagement.dto.LoginDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.PaymentDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserDTO;
+import it.unisalento.pas.smartcitywastemanagement.dto.UserWasteSeparationPerformanceDTO;
 import it.unisalento.pas.smartcitywastemanagement.exceptions.UserNotFoundException;
 import it.unisalento.pas.smartcitywastemanagement.repositories.UserRepository;
 import it.unisalento.pas.smartcitywastemanagement.security.JwtUtilities;
 import it.unisalento.pas.smartcitywastemanagement.service.PaymentService;
+import it.unisalento.pas.smartcitywastemanagement.service.WasteDisposalService;
+import it.unisalento.pas.smartcitywastemanagement.service.WasteSeparationPerformanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +35,9 @@ public class UserRestController {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private WasteSeparationPerformanceService wasteSeparationPerformanceService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -107,22 +114,26 @@ public class UserRestController {
         }
     }
 
-    @GetMapping("/{userId}/payments")
-    public ResponseEntity<List<PaymentDTO>> getUserPayments(@PathVariable String userId) {
-        List<PaymentDTO> paymentDTOs = paymentService.getPaymentsForUser(userId).stream()
-                .map(payment -> new PaymentDTO(payment.getId(), payment.getAmount(), payment.getPaymentDate(), payment.isPaid()))
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(paymentDTOs, HttpStatus.OK);
+    @GetMapping("/{id}/payments")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public ResponseEntity<List<Payment>> getAllPaymentsByUserId(@PathVariable String id) {
+        List<Payment> payments = paymentService.getAllPaymentsByUserId(id);
+        return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 
-    @PostMapping("/payments/{paymentId}/pay")
-    public ResponseEntity<String> payPayment(@PathVariable String paymentId) {
-        boolean paymentStatus = paymentService.payPayment(paymentId);
-        if (paymentStatus) {
-            return new ResponseEntity<>("Pagamento effettuato con successo", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Pagamento non riuscito", HttpStatus.BAD_REQUEST);
+    @GetMapping("/{id}/waste-separation-performance")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public ResponseEntity<UserWasteSeparationPerformanceDTO> getUserWasteSeparationPerformance(@PathVariable String id) {
+        // Verifica se l'utente esiste nel sistema
+        if (!userRepository.existsById(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        // Calcola le prestazioni di separazione dei rifiuti per l'utente specificato
+        UserWasteSeparationPerformanceDTO performanceDTO = wasteSeparationPerformanceService.calculateUserWasteSeparationPerformance(id);
+
+        // Restituisci le prestazioni di separazione dei rifiuti
+        return new ResponseEntity<>(performanceDTO, HttpStatus.OK);
     }
 
     private UserDTO convertToDTO(User user) {

@@ -1,0 +1,59 @@
+package it.unisalento.pas.smartcitywastemanagement.domain;
+
+
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.math.BigDecimal;
+
+@Document("bins")
+public class Bin {
+
+    @Id
+    private String id;
+    private String location;
+    private String type;
+    private boolean full;
+    private BigDecimal maxWeight;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public boolean isFull() {
+        return full;
+    }
+
+    public void setFull(boolean full) {
+        this.full = full;
+    }
+
+    public BigDecimal getMaxWeight() {
+        return maxWeight;
+    }
+
+    public void setMaxWeight(BigDecimal maxWeight) {
+        this.maxWeight = maxWeight;
+    }
+}
