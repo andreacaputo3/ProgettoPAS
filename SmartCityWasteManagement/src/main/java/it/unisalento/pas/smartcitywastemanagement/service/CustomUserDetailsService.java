@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             return org.springframework.security.core.userdetails.User
                     .withUsername(user.getUsername())
                     .password(user.getPassword())
-                    .roles(user.getRuolo())
+                    .roles(user.getRole())
                     .build();
         }
         throw new UsernameNotFoundException("User not found with username: " + username);
@@ -38,20 +38,32 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         User newUser = new User();
-        newUser.setNome(userDTO.getNome());
-        newUser.setCognome(userDTO.getCognome());
-        newUser.setEmail(userDTO.getEmail());
-        newUser.setEta(userDTO.getEta());
+        newUser.setName(userDTO.getName());
+        newUser.setSurname(userDTO.getSurname());
+        newUser.setMail(userDTO.getMail());
+        newUser.setAge(userDTO.getAge());
         newUser.setUsername(userDTO.getUsername());
         newUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        newUser.setRuolo(userDTO.getRuolo());
-
-        String ruolo = userDTO.getRuolo();
-        if (("USER".equals(ruolo))) {
-            newUser.setAwared(false);
-        }
+        newUser.setRole("USER");
+        newUser.setAwared(false);
 
         userRepository.save(newUser);
         return newUser;
     }
+
+    public User registerNewAdmin(UserDTO adminDTO) {
+        if (userRepository.existsByUsername(adminDTO.getUsername())) {
+            throw new IllegalArgumentException("Username già in uso");
+        }
+
+        User newAdmin = new User();
+        newAdmin.setMail(adminDTO.getMail());
+        newAdmin.setUsername(adminDTO.getUsername());
+        newAdmin.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
+        newAdmin.setRole(adminDTO.getRole());
+
+        userRepository.save(newAdmin);
+        return newAdmin;
+    }
+
 }

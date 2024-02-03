@@ -131,12 +131,12 @@ public class UserRestController {
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
-        userDTO.setNome(user.getNome());
-        userDTO.setCognome(user.getCognome());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setEta(user.getEta());
+        userDTO.setName(user.getName());
+        userDTO.setSurname(user.getSurname());
+        userDTO.setMail(user.getMail());
+        userDTO.setAge(user.getAge());
         userDTO.setUsername(user.getUsername());
-        userDTO.setRuolo(user.getRuolo());
+        userDTO.setRole(user.getRole());
         return userDTO;
     }
 }

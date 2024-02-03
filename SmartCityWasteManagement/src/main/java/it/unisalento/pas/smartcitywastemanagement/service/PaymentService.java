@@ -16,9 +16,6 @@ public class PaymentService {
     @Autowired
     private PaymentRepository paymentRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
     public void makePayment(PaymentDTO paymentDTO) {
         Payment payment = new Payment();
         payment.setAmount(paymentDTO.getAmount());

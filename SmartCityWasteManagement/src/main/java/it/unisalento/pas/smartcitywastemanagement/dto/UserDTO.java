@@ -1,15 +1,59 @@
 package it.unisalento.pas.smartcitywastemanagement.dto;
+
+import org.springframework.data.annotation.Id;
+
 public class UserDTO {
 
     private String id;
-    private String nome;
-    private String cognome;
-    private String email;
-    private Integer eta;
+    private String name;
+    private String surname;
+    private String mail;
+    private int age;
     private String username;
     private String password;
-    private String ruolo;
+    private String role;
     private Boolean isAwared;
+    private int incorrectDisposalCount;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
 
     public String getUsername() {
         return username;
@@ -27,52 +71,12 @@ public class UserDTO {
         this.password = password;
     }
 
-    public String getId() {
-        return id;
+    public String getRole() {
+        return role;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCognome() {
-        return cognome;
-    }
-
-    public void setCognome(String cognome) {
-        this.cognome = cognome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Integer getEta() {
-        return eta;
-    }
-
-    public void setEta(Integer eta) {
-        this.eta = eta;
-    }
-
-    public String getRuolo() {
-        return ruolo;
-    }
-
-    public void setRuolo(String ruolo) {
-        this.ruolo = ruolo;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Boolean getAwared() {
@@ -83,4 +87,11 @@ public class UserDTO {
         isAwared = awared;
     }
 
+    public int getIncorrectDisposalCount() {
+        return incorrectDisposalCount;
+    }
+
+    public void setIncorrectDisposalCount(int incorrectDisposalCount) {
+        this.incorrectDisposalCount = incorrectDisposalCount;
+    }
 }

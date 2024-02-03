@@ -1,4 +1,4 @@
-package it.unisalento.pas.smartcitywastemanagement.restcontrollers;
+package it.unisalento.pas.smartcitywastemanagement.controllers;
 
 import it.unisalento.pas.smartcitywastemanagement.domain.Payment;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserDTO;

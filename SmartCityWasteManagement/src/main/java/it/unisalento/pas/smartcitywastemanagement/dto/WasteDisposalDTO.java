@@ -11,7 +11,6 @@ public class WasteDisposalDTO {
     private String wasteType;
     private Date disposalDate;
     private BigDecimal weight;
-    private boolean isRecycled;
 
     public String getId() {
         return id;
@@ -59,13 +58,5 @@ public class WasteDisposalDTO {
 
     public void setWeight(BigDecimal weight) {
         this.weight = weight;
-    }
-
-    public boolean isRecycled() {
-        return isRecycled;
-    }
-
-    public void setRecycled(boolean recycled) {
-        isRecycled = recycled;
     }
 }

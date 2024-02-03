@@ -15,6 +15,6 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     List<User> findByIsAwared(boolean b);
 
-    List<User> findByRuolo(String role);
+    List<User> findByRole(String role);
 
 }

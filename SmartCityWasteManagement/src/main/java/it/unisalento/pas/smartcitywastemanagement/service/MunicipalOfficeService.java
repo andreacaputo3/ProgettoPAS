@@ -17,9 +17,6 @@ import java.util.stream.Collectors;
 public class MunicipalOfficeService {
 
     @Autowired
-    private PaymentService paymentService;
-
-    @Autowired
     private WasteDisposalService wasteDisposalService;
 
     @Autowired
@@ -30,7 +27,7 @@ public class MunicipalOfficeService {
 
     public Map<String, Double> calculateYearlyPaymentAmounts() {
         // Ottieni tutti gli utenti registrati nel comune
-        List<User> users = userRepository.findByRuolo("USER");
+        List<User> users = userRepository.findByRole("USER");
 
         // Costo fisso per unità di spazzatura (in euro)
         double costPerUnitOfWaste = 0.5; // Esempio, puoi modificare questo valore secondo le tue esigenze
@@ -69,16 +66,20 @@ public class MunicipalOfficeService {
         // Ottieni tutti gli utenti registrati nel comune
         List<User> users = userRepository.findAll();
 
+        if (users.isEmpty()) {
+         //da finire
+        }
+
         // Variabili per memorizzare le statistiche aggregate
         int totalDisposals = 0;
-        int recyclableWasteCount = 0;
+        int incorrectDisposalCount = 0; // Contatore per il numero totale di smaltimenti errati
         Map<String, Integer> wasteTypeCounts = new HashMap<>();
 
         // Calcola le statistiche aggregate per tutti gli utenti
         for (User user : users) {
             UserWasteSeparationPerformanceDTO userPerformance = wasteSeparationPerformanceService.calculateUserWasteSeparationPerformance(user.getId());
             totalDisposals += userPerformance.getTotalDisposals();
-            recyclableWasteCount += userPerformance.getRecyclableWasteCount();
+            incorrectDisposalCount += userPerformance.getIncorrectDisposalCount();
             // Aggiungi il conteggio dei tipi di rifiuti al conteggio complessivo
             for (Map.Entry<String, Integer> entry : userPerformance.getWasteTypeCounts().entrySet()) {
                 String wasteType = entry.getKey();
@@ -90,7 +91,7 @@ public class MunicipalOfficeService {
         // Crea un nuovo oggetto UserWasteSeparationPerformanceDTO con le statistiche aggregate
         UserWasteSeparationPerformanceDTO municipalPerformanceDTO = new UserWasteSeparationPerformanceDTO();
         municipalPerformanceDTO.setTotalDisposals(totalDisposals);
-        municipalPerformanceDTO.setRecyclableWasteCount(recyclableWasteCount);
+        municipalPerformanceDTO.setIncorrectDisposalCount(incorrectDisposalCount);
         municipalPerformanceDTO.setWasteTypeCounts(wasteTypeCounts);
 
         return municipalPerformanceDTO;
@@ -99,12 +100,12 @@ public class MunicipalOfficeService {
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
-        userDTO.setNome(user.getNome());
-        userDTO.setCognome(user.getCognome());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setEta(user.getEta());
+        userDTO.setName(user.getName());
+        userDTO.setSurname(user.getSurname());
+        userDTO.setMail(user.getMail());
+        userDTO.setAge(user.getAge());
         userDTO.setUsername(user.getUsername());
-        userDTO.setRuolo(user.getRuolo());
+        userDTO.setRole(user.getRole());
         return userDTO;
     }
 }

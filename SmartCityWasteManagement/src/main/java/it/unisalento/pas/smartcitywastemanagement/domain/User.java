@@ -12,14 +12,15 @@ public class User {
 
     @Id
     private String id;
-    private String nome;
-    private String cognome;
-    private String email;
-    private int eta;
+    private String name;
+    private String surname;
+    private String mail;
+    private Integer age;
     private String username;
     private String password;
-    private String ruolo;
+    private String role;
     private Boolean isAwared;
+    private int incorrectDisposalCount;
 
     public String getId() {
         return id;
@@ -29,36 +30,36 @@ public class User {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCognome() {
-        return cognome;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setCognome(String cognome) {
-        this.cognome = cognome;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMail() {
+        return mail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
-    public int getEta() {
-        return eta;
+    public Integer getAge() {
+        return age;
     }
 
-    public void setEta(int eta) {
-        this.eta = eta;
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getUsername() {
@@ -77,12 +78,12 @@ public class User {
         this.password = password;
     }
 
-    public String getRuolo() {
-        return ruolo;
+    public String getRole() {
+        return role;
     }
 
-    public void setRuolo(String ruolo) {
-        this.ruolo = ruolo;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Boolean getAwared() {
@@ -93,4 +94,11 @@ public class User {
         isAwared = awared;
     }
 
+    public int getIncorrectDisposalCount() {
+        return incorrectDisposalCount;
+    }
+
+    public void setIncorrectDisposalCount(int incorrectDisposalCount) {
+        this.incorrectDisposalCount = incorrectDisposalCount;
+    }
 }

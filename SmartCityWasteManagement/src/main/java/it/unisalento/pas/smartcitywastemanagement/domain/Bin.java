@@ -16,6 +16,9 @@ public class Bin {
     private String type;
     private boolean full;
     private BigDecimal maxWeight;
+    private BigDecimal currentWeight;
+    private double longitude;
+    private double latitude;
 
     public String getId() {
         return id;
@@ -55,5 +58,29 @@ public class Bin {
 
     public void setMaxWeight(BigDecimal maxWeight) {
         this.maxWeight = maxWeight;
+    }
+
+    public BigDecimal getCurrentWeight() {
+        return currentWeight;
+    }
+
+    public void setCurrentWeight(BigDecimal currentWeight) {
+        this.currentWeight = currentWeight;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 }
