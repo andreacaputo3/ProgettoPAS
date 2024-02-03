@@ -1,11 +1,12 @@
 package it.unisalento.pas.smartcitywastemanagement.service;
 
 import it.unisalento.pas.smartcitywastemanagement.domain.Bin;
+import it.unisalento.pas.smartcitywastemanagement.domain.WasteDisposal;
 import it.unisalento.pas.smartcitywastemanagement.dto.BinDTO;
 import it.unisalento.pas.smartcitywastemanagement.exceptions.BinNotFoundException;
 import it.unisalento.pas.smartcitywastemanagement.repositories.BinRepository;
+import it.unisalento.pas.smartcitywastemanagement.repositories.WasteDisposalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,7 +20,7 @@ public class BinService {
     private BinRepository binRepository;
 
     @Autowired
-    private WasteDisposalService wasteDisposalService;
+    private WasteDisposalRepository wasteDisposalRepository;
 
     public Bin createBin(BinDTO binDTO) {
         Bin bin = new Bin();
@@ -46,10 +47,18 @@ public class BinService {
             bin.setCurrentWeight(BigDecimal.ZERO);
             binRepository.save(bin);
             // Aggiorna lo stato dei disposal associati al bin
-            wasteDisposalService.updateDisposalsAfterBinEmpty(binId);
+           updateDisposalsAfterBinEmpty(binId);
         } else {
             // Gestire il caso in cui il cassonetto non viene trovato
             throw new BinNotFoundException(binId);
+        }
+    }
+
+    public void updateDisposalsAfterBinEmpty(String binId) {
+        List<WasteDisposal> disposals = wasteDisposalRepository.findByBinIdAndIsRecycledFalse(binId);
+        for (WasteDisposal disposal : disposals) {
+            disposal.setRecycled(true);
+            wasteDisposalRepository.save(disposal);
         }
     }
 

@@ -88,26 +88,4 @@ public class WasteDisposalService {
         return totalWeight;
     }
 
-    public double getTotalWasteProducedByUser(String userId) {
-        // Ottieni tutti i conferimenti di rifiuti dell'utente specificato
-        List<WasteDisposal> wasteDisposals = wasteDisposalRepository.findByUserId(userId);
-
-        // Variabile per memorizzare la quantità totale di rifiuti prodotti dall'utente
-        double totalWasteProducedByUser = 0.0;
-
-        // Itera su ciascun conferimento di rifiuti dell'utente e aggiungi il peso al totale
-        for (WasteDisposal disposal : wasteDisposals) {
-            totalWasteProducedByUser += disposal.getWeight().doubleValue();
-        }
-
-        return totalWasteProducedByUser;
-    }
-
-    public void updateDisposalsAfterBinEmpty(String binId) {
-        List<WasteDisposal> disposals = wasteDisposalRepository.findByBinIdAndIsRecycledFalse(binId);
-        for (WasteDisposal disposal : disposals) {
-            disposal.setRecycled(true);
-            wasteDisposalRepository.save(disposal);
-        }
-    }
 }

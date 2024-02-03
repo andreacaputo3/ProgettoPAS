@@ -1,9 +1,11 @@
 package it.unisalento.pas.smartcitywastemanagement.service;
 
 import it.unisalento.pas.smartcitywastemanagement.domain.User;
+import it.unisalento.pas.smartcitywastemanagement.domain.WasteDisposal;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserWasteSeparationPerformanceDTO;
 import it.unisalento.pas.smartcitywastemanagement.repositories.UserRepository;
+import it.unisalento.pas.smartcitywastemanagement.repositories.WasteDisposalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 public class MunicipalOfficeService {
 
     @Autowired
-    private WasteDisposalService wasteDisposalService;
+    private WasteDisposalRepository wasteDisposalRepository;
 
     @Autowired
     private WasteSeparationPerformanceService wasteSeparationPerformanceService;
@@ -38,7 +40,7 @@ public class MunicipalOfficeService {
         // Calcola l'importo da pagare per ogni cittadino
         for (User user : users) {
             // Calcola la quantità totale di spazzatura prodotta dall'utente
-            double totalWasteProducedByUser = wasteDisposalService.getTotalWasteProducedByUser(user.getId());
+            double totalWasteProducedByUser = getTotalWasteProducedByUser(user.getId());
 
             // Calcola l'importo da pagare per l'utente
             double yearlyPaymentAmountForUser = totalWasteProducedByUser * costPerUnitOfWaste;
@@ -107,5 +109,20 @@ public class MunicipalOfficeService {
         userDTO.setUsername(user.getUsername());
         userDTO.setRole(user.getRole());
         return userDTO;
+    }
+
+    public double getTotalWasteProducedByUser(String userId) {
+        // Ottieni tutti i conferimenti di rifiuti dell'utente specificato
+        List<WasteDisposal> wasteDisposals = wasteDisposalRepository.findByUserId(userId);
+
+        // Variabile per memorizzare la quantità totale di rifiuti prodotti dall'utente
+        double totalWasteProducedByUser = 0.0;
+
+        // Itera su ciascun conferimento di rifiuti dell'utente e aggiungi il peso al totale
+        for (WasteDisposal disposal : wasteDisposals) {
+            totalWasteProducedByUser += disposal.getWeight().doubleValue();
+        }
+
+        return totalWasteProducedByUser;
     }
 }
