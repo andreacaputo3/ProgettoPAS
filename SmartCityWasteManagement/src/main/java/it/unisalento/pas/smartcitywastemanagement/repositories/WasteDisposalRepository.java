@@ -9,5 +9,7 @@ public interface WasteDisposalRepository extends MongoRepository<WasteDisposal, 
     List<WasteDisposal> findByUserId(String userId);
 
     List<WasteDisposal> findByBinId(String id);
+
+    List<WasteDisposal> findByBinIdAndIsRecycledFalse(String binId);
     // Puoi definire qui eventuali metodi personalizzati se necessario
 }

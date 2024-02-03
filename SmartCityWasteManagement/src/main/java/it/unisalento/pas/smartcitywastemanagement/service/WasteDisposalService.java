@@ -37,6 +37,7 @@ public class WasteDisposalService {
         wasteDisposal.setWasteType(wasteDisposalDTO.getWasteType());
         wasteDisposal.setDisposalDate(wasteDisposalDTO.getDisposalDate());
         wasteDisposal.setWeight(wasteDisposalDTO.getWeight());
+        wasteDisposal.setRecycled(false);
 
         Bin bin = binRepository.findById(wasteDisposalDTO.getBinId())
                 .orElseThrow(() -> new BinNotFoundException(wasteDisposalDTO.getBinId()));
@@ -76,10 +77,10 @@ public class WasteDisposalService {
     }
 
     private BigDecimal getCurrentWeightOfBin(Bin bin) {
-        // Ottieni tutti i conferimenti di rifiuti relativi a questo cassonetto
-        List<WasteDisposal> disposals = wasteDisposalRepository.findByBinId(bin.getId());
+        // Ottieni tutti i conferimenti di rifiuti non riciclati relativi a questo cassonetto
+        List<WasteDisposal> disposals = wasteDisposalRepository.findByBinIdAndIsRecycledFalse(bin.getId());
 
-        // Calcola il peso totale dei rifiuti nel cassonetto
+        // Calcola il peso totale dei rifiuti non riciclati nel cassonetto
         BigDecimal totalWeight = BigDecimal.ZERO;
         for (WasteDisposal disposal : disposals) {
             totalWeight = totalWeight.add(disposal.getWeight());
@@ -100,5 +101,13 @@ public class WasteDisposalService {
         }
 
         return totalWasteProducedByUser;
+    }
+
+    public void updateDisposalsAfterBinEmpty(String binId) {
+        List<WasteDisposal> disposals = wasteDisposalRepository.findByBinIdAndIsRecycledFalse(binId);
+        for (WasteDisposal disposal : disposals) {
+            disposal.setRecycled(true);
+            wasteDisposalRepository.save(disposal);
+        }
     }
 }

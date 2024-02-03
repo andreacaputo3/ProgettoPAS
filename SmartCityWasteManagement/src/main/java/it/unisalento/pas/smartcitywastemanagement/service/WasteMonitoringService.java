@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,7 +18,8 @@ public class WasteMonitoringService {
     @Autowired
     private BinRepository binRepository;
 
-    public void checkBinCapacity() {
+    public List<Bin> checkBinCapacity() {
+        List<Bin> binsWithOverflowCapacity = new ArrayList<>();
         try {
             List<Bin> allBins = binRepository.findAll();
 
@@ -25,8 +27,7 @@ public class WasteMonitoringService {
                 double currentCapacityPercentage = calculateCurrentCapacityPercentage(bin);
 
                 if (currentCapacityPercentage > CAPACITY_THRESHOLD_PERCENTAGE) {
-                    System.out.println("Sovrabbondanza di cassonetto: " + bin.getLocation() +
-                            " con capienza al " + (int) (currentCapacityPercentage * 100) + "%");
+                    binsWithOverflowCapacity.add(bin);
                 }
             }
         } catch (Exception e) {
@@ -34,6 +35,7 @@ public class WasteMonitoringService {
             System.err.println("Errore durante il controllo della capienza dei cassonetti: " + e.getMessage());
             e.printStackTrace(); // Stampa lo stack trace dell'eccezione per il debug
         }
+        return binsWithOverflowCapacity;
     }
 
     private double calculateCurrentCapacityPercentage(Bin bin) {
