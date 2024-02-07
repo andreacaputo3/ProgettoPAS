@@ -77,16 +77,18 @@ public class MunicipalOfficeService {
         int incorrectDisposalCount = 0; // Contatore per il numero totale di smaltimenti errati
         Map<String, Integer> wasteTypeCounts = new HashMap<>();
 
-        // Calcola le statistiche aggregate per tutti gli utenti
+        // Calcola le statistiche per tutti gli utenti
         for (User user : users) {
-            UserWasteSeparationPerformanceDTO userPerformance = wasteSeparationPerformanceService.calculateUserWasteSeparationPerformance(user.getId());
-            totalDisposals += userPerformance.getTotalDisposals();
-            incorrectDisposalCount += userPerformance.getIncorrectDisposalCount();
-            // Aggiungi il conteggio dei tipi di rifiuti al conteggio complessivo
-            for (Map.Entry<String, Integer> entry : userPerformance.getWasteTypeCounts().entrySet()) {
-                String wasteType = entry.getKey();
-                int count = entry.getValue();
-                wasteTypeCounts.put(wasteType, wasteTypeCounts.getOrDefault(wasteType, 0) + count);
+            if(user.getRole().equals("USER")){
+                UserWasteSeparationPerformanceDTO userPerformance = wasteSeparationPerformanceService.calculateUserWasteSeparationPerformance(user.getId());
+                totalDisposals += userPerformance.getTotalDisposals();
+                incorrectDisposalCount += userPerformance.getIncorrectDisposalCount();
+                // Aggiungi il conteggio dei tipi di rifiuti al conteggio complessivo
+                for (Map.Entry<String, Integer> entry : userPerformance.getWasteTypeCounts().entrySet()) {
+                    String wasteType = entry.getKey();
+                    int count = entry.getValue();
+                    wasteTypeCounts.put(wasteType, wasteTypeCounts.getOrDefault(wasteType, 0) + count);
+                }
             }
         }
 

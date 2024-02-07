@@ -1,0 +1,76 @@
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {environment} from "../../enviroments/enviroments";
+
+@Component({
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
+})
+export class RegisterComponent {
+  registerData = {
+    username: '',
+    password: '',
+    mail: '',
+    name: '',
+    surname: '',
+    age: null
+  };
+  errorMessage: string = '';
+  successMessage: string = '';
+  loading: boolean = false;
+
+  constructor(private router: Router, private http: HttpClient) {}
+
+  registerUser(): void {
+    // Controllo se tutti i campi sono stati compilati
+    if (!this.registerData.username || !this.registerData.password || !this.registerData.mail ||
+      !this.registerData.name || !this.registerData.surname || !this.registerData.age) {
+      this.errorMessage = 'Tutti i campi sono obbligatori.';
+      return;
+    }
+
+    // Controllo se l'età è un numero positivo
+    if (this.registerData.age <= 0) {
+      this.errorMessage = 'L\'età deve essere maggiore di 0.';
+      return;
+    }
+
+    // Se tutti i controlli passano, procedi con la registrazione
+    this.loading = true;
+    let url = `${environment.apiUrl}/users/register`;
+
+    console.log(this.registerData);
+
+    this.http.post<any>(url, this.registerData, { headers: this.getHeaders() }).subscribe({
+      next: (response) => {
+        // Registrazione avvenuta con successo
+        this.successMessage = 'Registrazione avvenuta con successo!';
+        this.errorMessage = '';
+        this.loading = false;
+        localStorage.setItem('jwtToken', response.token);
+        // Reindirizza l'utente alla pagina di login
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        // Registrazione fallita
+        if (error.status === 400) {
+          // Errore di validazione dei dati inviati
+          this.errorMessage = error.error;
+        } else {
+          // Altro tipo di errore
+          this.errorMessage = 'Errore durante la registrazione. Si prega di riprovare.';
+        }
+        this.successMessage = '';
+        this.loading = false;
+      }
+    });
+  }
+
+  private getHeaders(): HttpHeaders {
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return headers;
+  }
+}

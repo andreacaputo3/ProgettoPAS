@@ -1,5 +1,6 @@
 package it.unisalento.pas.smartcitywastemanagement.restcontrollers;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import it.unisalento.pas.smartcitywastemanagement.domain.Payment;
 import it.unisalento.pas.smartcitywastemanagement.domain.User;
 import it.unisalento.pas.smartcitywastemanagement.dto.LoginDTO;
@@ -14,6 +15,7 @@ import it.unisalento.pas.smartcitywastemanagement.service.CustomUserDetailsServi
 import it.unisalento.pas.smartcitywastemanagement.service.PaymentService;
 import it.unisalento.pas.smartcitywastemanagement.service.WasteDisposalService;
 import it.unisalento.pas.smartcitywastemanagement.service.WasteSeparationPerformanceService;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,13 +78,31 @@ public class UserRestController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         try {
+            // Verifica se l'username è già in uso
+            if (userRepository.existsByUsername(userDTO.getUsername())) {
+                return new ResponseEntity<>("Registrazione fallita: Username già in uso", HttpStatus.BAD_REQUEST);
+            }
+
             User registeredUser = customUserDetailsService.registerNewUser(userDTO);
+            // Verifica se l'utente è stato registrato correttamente
+            if (registeredUser == null) {
+                return new ResponseEntity<>("Registrazione fallita: impossibile ottenere l'utente registrato", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            // Genera il token JWT per l'utente registrato
             var jwtToken = jwtUtilities.generateToken(registeredUser.getUsername());
-            return new ResponseEntity<>(jwtToken, HttpStatus.CREATED);
+
+            // Costruisci la mappa per includere il token JWT nella risposta
+            HashMap<String, String> map = new HashMap<>();
+            map.put("token", jwtToken);
+
+            return new ResponseEntity<>(map, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            // Gestisci eventuali eccezioni durante la registrazione
+            return new ResponseEntity<>("Registrazione fallita: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDTO) {
@@ -97,7 +118,12 @@ public class UserRestController {
 
             if (authenticatedUser != null) {
                 var jwtToken = jwtUtilities.generateToken(authenticatedUser.getUsername());
-                return new ResponseEntity<>(jwtToken, HttpStatus.OK);
+                HashMap<String, String> map = new HashMap<>();
+                map.put("token", jwtToken);
+                map.put("id", authenticatedUser.getId());
+                map.put("username", authenticatedUser.getUsername());
+                map.put("role", authenticatedUser.getRole());
+                return new ResponseEntity<>(map, HttpStatus.OK);
             } else {
                 throw new UserNotFoundException(loginDTO.getUsername());
             }

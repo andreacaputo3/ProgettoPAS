@@ -8,7 +8,9 @@ import it.unisalento.pas.smartcitywastemanagement.service.CleaningPathService;
 import it.unisalento.pas.smartcitywastemanagement.service.WasteMonitoringService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -55,21 +57,24 @@ public class WasteCompanyController {
     @GetMapping("/map")
     @PreAuthorize("hasRole('ADMIN_AZIENDA')")
     public ResponseEntity<List<BinMapMarkerDTO>> getBinsForMap() {
-        List<Bin> bins = binService.getAllBins();
+        try {
+            List<BinMapMarkerDTO> binMapMarkers = binService.getAllBins().stream()
+                    .map(bin -> {
+                        BinMapMarkerDTO marker = new BinMapMarkerDTO();
+                        marker.setLocation(bin.getLocation());
+                        marker.setLatitude(bin.getLatitude());
+                        marker.setLongitude(bin.getLongitude());
+                        marker.setStatus(bin.isFull() ? "Pieno" : "Non Pieno");
+                        return marker;
+                    })
+                    .collect(Collectors.toList());
 
-        List<BinMapMarkerDTO> binMapMarkers = bins.stream()
-                .map(bin -> {
-                    BinMapMarkerDTO marker = new BinMapMarkerDTO();
-                    marker.setId(bin.getId());
-                    marker.setLocation(bin.getLocation());
-                    marker.setLatitude(bin.getLatitude());
-                    marker.setLongitude(bin.getLongitude());
-                    marker.setStatus(bin.isFull() ? "Full" : "Not Full");
-                    return marker;
-                })
-                .collect(Collectors.toList());
-
-        return new ResponseEntity<>(binMapMarkers, HttpStatus.OK);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            return new ResponseEntity<>(binMapMarkers, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/cleaning-paths")
@@ -80,7 +85,9 @@ public class WasteCompanyController {
             List<CleaningPath> cleaningPaths = cleaningPathService.generateCleaningPaths(bins); // Dove bins è una lista di cassonetti
             // Puoi fare qualcosa con i percorsi generati, ad esempio salvarli nel database
 
-            return new ResponseEntity<>(cleaningPaths, HttpStatus.OK);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            return new ResponseEntity<>(cleaningPaths, headers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

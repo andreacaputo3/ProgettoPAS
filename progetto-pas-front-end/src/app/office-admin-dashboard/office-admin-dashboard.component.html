@@ -1,0 +1,91 @@
+<div class="container">
+  <h2 class="mt-4">Benvenuto, {{ localStorage.getItem('username') }}</h2>
+  <p class="lead mt-2">Accedi alle sezioni dedicate premendo i pulsanti sottostanti.</p>
+
+  <div class="button-container mt-4 mb-4">
+    <button class="btn btn-primary mr-2" style="margin-right: 10px;" (click)="getUsersToAware()" [disabled]="loadingUsersToAware">Utenti da sensibilizzare</button>
+    <button class="btn btn-primary mr-2" style="margin-right: 10px;" (click)="getPaymentsState()" [disabled]="loadingPaymentsState">Stato dei pagamenti</button>
+    <button class="btn btn-primary mr-2" style="margin-right: 10px;" (click)="getWasteSeparationPerformance()" [disabled]="loadingWasteSeparationPerformance">Performance di separazione dei rifiuti</button>
+    <button class="btn btn-primary" (click)="calculateYearlyPaymentAmounts()" [disabled]="loadingYearlyPaymentAmounts">Calcola pagamenti annuali</button>
+  </div>
+
+  <div *ngIf="loadingUsersToAware || loadingPaymentsState || loadingWasteSeparationPerformance || loadingYearlyPaymentAmounts" class="loading-container">
+    <p class="alert alert-info">Caricamento in corso...</p>
+  </div>
+
+  <ng-container *ngIf="usersToAwareData">
+    <div class="user-container mt-4">
+      <h2>Utenti da sensibilizzare</h2>
+      <div class="card" *ngFor="let user of usersToAwareData">
+        <div class="card-body">
+          <p class="card-text">Nome: {{ user.name }}</p>
+          <p class="card-text">Cognome: {{ user.surname }}</p>
+          <p class="card-text">Email: {{ user.mail }}</p>
+          <p class="card-text">Età: {{ user.age }}</p>
+          <p class="card-text">Username: {{ user.username }}</p>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="paymentsStateData">
+    <div class="user-container mt-4">
+      <h2>Stato dei pagamenti</h2>
+      <div class="card" *ngFor="let paymentData of paymentsStateData">
+        <div class="card-body">
+          <div *ngIf="paymentData.user">
+            <p class="card-text">Nome utente: {{ paymentData.user.name }}</p>
+            <p class="card-text">Cognome utente: {{ paymentData.user.surname }}</p>
+            <p class="card-text">Email utente: {{ paymentData.user.mail }}</p>
+            <p class="card-text">Username utente: {{ paymentData.user.username }}</p>
+          </div>
+          <div *ngIf="paymentData.payment">
+            <p></p>
+            <p class="card-text">Importo pagamento: {{ paymentData.payment.amount }}</p>
+            <p class="card-text">Pagato: {{ paymentData.payment.paid ? 'Si' : 'No' }}</p>
+            <p class="card-text">Data pagamento: {{ paymentData.payment.paymentDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="wasteSeparationPerformanceData">
+    <div class="user-container mt-4">
+      <h2>Performance di separazione dei rifiuti</h2>
+      <div class="card">
+        <div class="card-body">
+          <p class="card-text">Numero totale di smaltimenti: {{ wasteSeparationPerformanceData.totalDisposals }}</p>
+          <p class="card-text">Numero di smaltimenti incorretti: {{ wasteSeparationPerformanceData.incorrectDisposalCount }}</p>
+          <p class="card-text">Tipo di rifiuto:</p>
+          <ul>
+            <li *ngFor="let wasteType of Object.keys(wasteSeparationPerformanceData.wasteTypeCounts)">
+              {{ wasteType }}: {{ wasteSeparationPerformanceData.wasteTypeCounts[wasteType] }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="yearlyPaymentAmountsData">
+    <div class="user-container mt-4">
+      <h2>Calcola pagamenti annuali</h2>
+      <div class="card" *ngFor="let data of yearlyPaymentAmountsData">
+        <div class="card-body">
+          <div *ngIf="data.user">
+            <p class="card-text">Nome: {{ data.user.name }}</p>
+            <p class="card-text">Cognome: {{ data.user.surname }}</p>
+            <p class="card-text">Email: {{ data.user.mail }}</p>
+            <p class="card-text">Età: {{ data.user.age }}</p>
+            <p class="card-text">Username: {{ data.user.username }}</p>
+          </div>
+          <div *ngIf="data.yearlyPaymentAmount !== null && data.yearlyPaymentAmount !== undefined">
+            <p></p>
+            <p class="card-text">Importo annuale da pagare: {{ data.yearlyPaymentAmount }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

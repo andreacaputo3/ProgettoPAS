@@ -13,7 +13,7 @@ public class UserDTO {
     private String password;
     private String role;
     private Boolean isAwared;
-    private int incorrectDisposalCount;
+    private Integer incorrectDisposalCount;
 
     public String getId() {
         return id;
@@ -87,11 +87,11 @@ public class UserDTO {
         isAwared = awared;
     }
 
-    public int getIncorrectDisposalCount() {
+    public Integer getIncorrectDisposalCount() {
         return incorrectDisposalCount;
     }
 
-    public void setIncorrectDisposalCount(int incorrectDisposalCount) {
+    public void setIncorrectDisposalCount(Integer incorrectDisposalCount) {
         this.incorrectDisposalCount = incorrectDisposalCount;
     }
 }

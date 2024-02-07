@@ -1,0 +1,58 @@
+<div class="container">
+  <h2 class="mt-4">Benvenuto, {{ localStorage.getItem('username') }}</h2>
+  <p class="lead mt-2">Accedi alle sezioni dedicate premendo i pulsanti sottostanti.</p>
+
+  <div class="button-container mt-4 mb-4">
+    <button class="btn btn-primary" style="margin-right: 10px;" (click)="checkWasteDisposals()">Verifica conferimenti</button>
+    <button class="btn btn-primary" style="margin-right: 10px;" (click)="getBinsForMap()">Recupera cassonetti per la mappa</button>
+    <button class="btn btn-primary" style="margin-right: 10px;" (click)="instantiateCleaningPaths()">Istanza percorsi di pulizia</button>
+  </div>
+
+  <div *ngIf="loadingData" class="loading-container">
+    <p class="alert alert-info">Caricamento in corso...</p>
+  </div>
+
+  <div *ngIf="checkResult" class="result-container">
+    <p class="alert alert-success">{{ checkResult }}</p>
+  </div>
+
+  <div class="data-container">
+    <ng-container *ngIf="binsForMap && binsForMap.length > 0">
+      <h3 class="mt-4">Cassonetto attivo:</h3>
+      <ng-container *ngFor="let bin of binsForMap">
+        <div class="map-container">
+          <div class="card">
+            <div class="card-body">
+              <p class="card-text">Posizione: {{ bin.location }}</p>
+              <p class="card-text">Latitudine: {{ bin.latitude }}</p>
+              <p class="card-text">Longitudine: {{ bin.longitude }}</p>
+              <p class="card-text">Stato: {{ bin.status }}</p>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngFor="let path of cleaningPaths">
+      <h3 class="mt-4">Percorsi di Pulizia</h3>
+      <div class="cleaning-path-container">
+        <div class="card">
+          <div class="card-body">
+            <p class="card-text">Distanza: {{ path.distance }}</p>
+            <b><p class="card-text">Cassonetto di Partenza:</p></b>
+            <p></p>
+            <p class="card-text">Posizione: {{ path.startBin.location }}</p>
+            <p class="card-text">Latitudine: {{ path.startBin.latitude }}</p>
+            <p class="card-text">Longitudine: {{ path.startBin.longitude }}</p>
+            <b><p class="card-text">Cassonetto di Arrivo:</p></b>
+            <p></p>
+            <p class="card-text">Posizione: {{ path.endBin.location }}</p>
+            <p class="card-text">Latitudine: {{ path.endBin.latitude }}</p>
+            <p class="card-text">Longitudine: {{ path.endBin.longitude }}</p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+  </div>
+</div>

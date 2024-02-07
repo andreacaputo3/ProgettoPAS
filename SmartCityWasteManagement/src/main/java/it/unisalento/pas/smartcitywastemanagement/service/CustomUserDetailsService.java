@@ -33,10 +33,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public User registerNewUser(UserDTO userDTO) {
-        if (userRepository.existsByUsername(userDTO.getUsername())) {
-            throw new IllegalArgumentException("Username già in uso");
-        }
-
         User newUser = new User();
         newUser.setName(userDTO.getName());
         newUser.setSurname(userDTO.getSurname());
@@ -50,6 +46,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         userRepository.save(newUser);
         return newUser;
     }
+
 
     public User registerNewAdmin(UserDTO adminDTO) {
         if (userRepository.existsByUsername(adminDTO.getUsername())) {

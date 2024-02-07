@@ -1,0 +1,17 @@
+<!-- homepage.component.html -->
+<div class="container">
+  <div class="row justify-content-center align-items-center vh-100">
+    <div class="col-md-6">
+      <div class="card shadow-lg">
+        <div class="card-body text-center">
+          <h1 class="card-title display-2 mb-4">Benvenuto sulla Homepage</h1> <!-- Aumenta le dimensioni del titolo -->
+          <p class="card-text lead">Scegli un'opzione per continuare.</p> <!-- Aumenta le dimensioni del testo -->
+          <div class="btn-group" role="group" aria-label="Opzioni">
+            <button type="button" class="btn btn-primary btn-lg mr-2" (click)="goToLogin()">Login</button> <!-- Aumenta le dimensioni del bottone -->
+            <button type="button" class="btn btn-success btn-lg" (click)="goToRegister()">Registrati</button> <!-- Aumenta le dimensioni del bottone -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

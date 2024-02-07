@@ -9,10 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -24,19 +23,23 @@ public class AdminController {
     @Autowired
     private JwtUtilities jwtUtilities;
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/register-company-admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> registerAziendaAdmin(@RequestBody UserDTO adminDTO) {
+    public ResponseEntity<?> registerAziendaAdmin(@RequestBody UserDTO adminDTO) {
         try {
             adminDTO.setRole("ADMIN_AZIENDA");
             User registeredAdmin = userService.registerNewAdmin(adminDTO);
             var jwtToken = jwtUtilities.generateToken(registeredAdmin.getUsername());
-            return new ResponseEntity<>(jwtToken, HttpStatus.CREATED);
+            HashMap<String, String> map = new HashMap<>();
+            map.put("token", jwtToken);
+            return new ResponseEntity<>(map, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Errore durante la registrazione dell'amministratore aziendale: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/register-office-admin")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> registerUfficioAdmin(@RequestBody UserDTO adminDTO) {
