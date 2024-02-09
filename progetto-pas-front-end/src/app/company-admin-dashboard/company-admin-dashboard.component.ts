@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {environment} from "../../enviroments/enviroments";
 
@@ -12,17 +13,22 @@ export class CompanyAdminDashboardComponent {
   binsForMap: any[] = [];
   cleaningPaths: any[] = [];
   loadingData: boolean = false; // Aggiunta variabile per il caricamento dei dati
+  overloadedBins: any[] = [];
+  successMessage = '';
 
 
-  constructor(private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   checkWasteDisposals(): void {
     this.resetData();
     let url = `${environment.apiUrl}/waste-company/check-waste-disposals`;
-    this.http.post(url, {}, { headers: this.getHeaders(), responseType: 'text' })
+    this.http.post<any>(url, {}, { headers: this.getHeaders() })
       .subscribe({
         next: (response) => {
-          this.checkResult = response;
+          this.checkResult = response.message;
+          console.log(response.message);
+          console.log(response.overloadedBins);
+          this.overloadedBins = response.overloadedBins;
           this.loadingData = false;
         },
         error: (error) => {
@@ -66,10 +72,12 @@ export class CompanyAdminDashboardComponent {
   }
 
   emptyBin(binId: string): void {
-    this.http.post<string>(`/api/waste-company/${binId}/empty`, {})
+    console.log(binId);
+    let url = `${environment.apiUrl}/waste-company/${binId}/empty`;
+    this.http.post<string>(url, {}, { headers: this.getHeaders() })
       .subscribe({
         next: (response) => {
-          console.log(response); // Puoi gestire la risposta qui, se necessario
+          this.successMessage = "Svuotamento eseguito";
           this.loadingData = false;
         },
         error: (error) => {
@@ -90,6 +98,17 @@ export class CompanyAdminDashboardComponent {
     headers = headers.append("Content-Type", "application/json");
     return headers;
   }
+
+  logout(): void {
+    // Rimuovi le credenziali memorizzate nel localStorage o esegui altre operazioni di logout necessarie
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('username');
+
+    // Reindirizza l'utente alla pagina di accesso o ad un'altra pagina appropriata
+    // Puoi utilizzare il Router per navigare a una nuova pagina
+    this.router.navigate(['/login']); // Assicurati di importare il Router e di iniettarlo nel costruttore del componente
+  }
+
 
   protected readonly localStorage = localStorage;
 }

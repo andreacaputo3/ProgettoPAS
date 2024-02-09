@@ -1,1 +1,71 @@
-<p>user-dashboard works!</p>
+<div class="header">
+  <h1>Benvenuto, {{ localStorage.getItem('username') }}</h1>
+  <button class="btn btn-danger" (click)="logout()">Logout</button>
+</div>
+
+<div class="container">
+  <div class="user-container mt-4">
+    <h2>Pagamenti</h2>
+    <div *ngIf="paymentsData && paymentsData.length > 0">
+      <div class="card" *ngFor="let payment of paymentsData">
+        <div class="card-body">
+          <p class="card-text">Importo (€): {{ payment.amount }}</p>
+          <p class="card-text">Data Emissione: {{ payment.emissionDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+          <p class="card-text">Data Pagamento: {{ payment.paymentDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+          <p class="card-text">Stato Pagamento: {{ payment.paid ? 'Pagato' : 'Non Pagato' }}</p>
+          <button *ngIf="!payment.paid" class="btn btn-primary" (click)="payPayment(payment.id)">Paga</button>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!paymentsData || paymentsData.length === 0">
+      <p>{{ noPaymentsMessage }}</p>
+    </div>
+  </div>
+
+  <div class="user-container mt-4">
+    <h2>Prestazioni di separazione dei rifiuti</h2>
+    <div *ngIf="wasteSeparationPerformanceData">
+      <div class="card">
+        <div class="card-body">
+          <p class="card-text">Numero Totale di Smaltimenti: {{ wasteSeparationPerformanceData.totalDisposals }}</p>
+          <p class="card-text">Numero di Smaltimenti Incorretti: {{ wasteSeparationPerformanceData.incorrectDisposalCount }}</p>
+          <p *ngIf="wasteSeparationPerformanceData.wasteTypeCounts && Object.keys(wasteSeparationPerformanceData.wasteTypeCounts).length > 0" class="card-text">Tipo di Rifiuto:</p>
+          <ul *ngIf="wasteSeparationPerformanceData.wasteTypeCounts && Object.keys(wasteSeparationPerformanceData.wasteTypeCounts).length > 0">
+            <li *ngFor="let wasteType of Object.keys(wasteSeparationPerformanceData.wasteTypeCounts)">
+              {{ wasteType }}: {{ wasteSeparationPerformanceData.wasteTypeCounts[wasteType] }}
+            </li>
+          </ul>
+          <p *ngIf="!wasteSeparationPerformanceData.wasteTypeCounts || Object.keys(wasteSeparationPerformanceData.wasteTypeCounts).length === 0" class="card-text"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form>
+    <div class="form-group">
+      <label for="location">Seleziona la locazione del cassonetto</label>
+      <select class="form-control" id="location" [(ngModel)]="disposalData.binId" [ngModelOptions]="{standalone: true}">
+        <option *ngFor="let bin of locations" [value]="bin.id">{{ bin.location }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="wasteType">Tipo di rifiuto</label>
+      <select class="form-control" id="wasteType" [(ngModel)]="disposalData.wasteType" [ngModelOptions]="{standalone: true}">
+        <option value="Vetro">Vetro</option>
+        <option value="Plastica">Plastica</option>
+        <option value="Alluminio">Alluminio</option>
+        <option value="Carta e cartone">Carta e cartone</option>
+        <option value="Umido o organico">Umido o organico</option>
+        <option value="Secco indifferenziato">Secco indifferenziato</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="weight">Peso (kg)</label>
+      <input type="number" class="form-control" id="weight" [(ngModel)]="disposalData.weight" [ngModelOptions]="{standalone: true}" required min="0.1">
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+    <div *ngIf="responseMessage" class="alert alert-success mt-3">{{ responseMessage }}</div>
+    <button type="button" class="btn btn-primary" (click)="submitConferimento()">Conferisci</button>
+  </form>
+
+</div>

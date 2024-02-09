@@ -6,8 +6,9 @@ import java.util.Date;
 public class PaymentDTO {
 
     private String id;
-    private BigDecimal amount;
+    private Double amount;
     private Date paymentDate;
+    private Date emissionDate;
     private boolean paid;
     private String userId;
 
@@ -19,11 +20,11 @@ public class PaymentDTO {
         this.id = id;
     }
 
-    public BigDecimal getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
@@ -49,5 +50,13 @@ public class PaymentDTO {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public Date getEmissionDate() {
+        return emissionDate;
+    }
+
+    public void setEmissionDate(Date emissionDate) {
+        this.emissionDate = emissionDate;
     }
 }

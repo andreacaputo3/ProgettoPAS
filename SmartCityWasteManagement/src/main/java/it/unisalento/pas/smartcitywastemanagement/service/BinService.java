@@ -41,17 +41,13 @@ public class BinService {
 
     public void emptyBin(String binId) {
         Optional<Bin> binOptional = binRepository.findById(binId);
-        if (binOptional.isPresent()) {
-            Bin bin = binOptional.get();
-            bin.setFull(false);
-            bin.setCurrentWeight(BigDecimal.ZERO);
-            binRepository.save(bin);
-            // Aggiorna lo stato dei disposal associati al bin
-           updateDisposalsAfterBinEmpty(binId);
-        } else {
-            // Gestire il caso in cui il cassonetto non viene trovato
-            throw new BinNotFoundException(binId);
-        }
+
+        Bin bin = binOptional.get();
+        bin.setFull(false);
+        bin.setCurrentWeight(BigDecimal.ZERO);
+        binRepository.save(bin);
+        // Aggiorna lo stato dei disposal associati al bin
+        updateDisposalsAfterBinEmpty(binId);
     }
 
     public void updateDisposalsAfterBinEmpty(String binId) {

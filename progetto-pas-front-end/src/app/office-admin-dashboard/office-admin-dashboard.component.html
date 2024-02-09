@@ -1,12 +1,17 @@
+<div class="header">
+  <h1>Benvenuto, {{ localStorage.getItem('username') }}</h1>
+  <button class="btn btn-danger" (click)="logout()">Logout</button>
+</div>
+
 <div class="container">
-  <h2 class="mt-4">Benvenuto, {{ localStorage.getItem('username') }}</h2>
   <p class="lead mt-2">Accedi alle sezioni dedicate premendo i pulsanti sottostanti.</p>
 
   <div class="button-container mt-4 mb-4">
-    <button class="btn btn-primary mr-2" style="margin-right: 10px;" (click)="getUsersToAware()" [disabled]="loadingUsersToAware">Utenti da sensibilizzare</button>
+    <button class="btn btn-primary mr-2" style="margin-right: 10px;" (click)="getUsersToAware()" [disabled]="loadingUsersToAware">Cittadini da sensibilizzare</button>
     <button class="btn btn-primary mr-2" style="margin-right: 10px;" (click)="getPaymentsState()" [disabled]="loadingPaymentsState">Stato dei pagamenti</button>
     <button class="btn btn-primary mr-2" style="margin-right: 10px;" (click)="getWasteSeparationPerformance()" [disabled]="loadingWasteSeparationPerformance">Performance di separazione dei rifiuti</button>
-    <button class="btn btn-primary" (click)="calculateYearlyPaymentAmounts()" [disabled]="loadingYearlyPaymentAmounts">Calcola pagamenti annuali</button>
+    <button class="btn btn-primary" style="margin-right: 10px;" (click)="calculateYearlyPaymentAmounts()" [disabled]="loadingYearlyPaymentAmounts">Calcola pagamenti annuali</button>
+    <button class="btn btn-primary" style="margin-right: 10px;" (click)="erogateYearlyPayments()" [disabled]="loadingYearlyPaymentAmounts">Eroga Pagamenti Annuali</button>
   </div>
 
   <div *ngIf="loadingUsersToAware || loadingPaymentsState || loadingWasteSeparationPerformance || loadingYearlyPaymentAmounts" class="loading-container">
@@ -15,7 +20,7 @@
 
   <ng-container *ngIf="usersToAwareData">
     <div class="user-container mt-4">
-      <h2>Utenti da sensibilizzare</h2>
+      <h2>Cittadini da sensibilizzare</h2>
       <div class="card" *ngFor="let user of usersToAwareData">
         <div class="card-body">
           <p class="card-text">Nome: {{ user.name }}</p>
@@ -34,10 +39,10 @@
       <div class="card" *ngFor="let paymentData of paymentsStateData">
         <div class="card-body">
           <div *ngIf="paymentData.user">
-            <p class="card-text">Nome utente: {{ paymentData.user.name }}</p>
-            <p class="card-text">Cognome utente: {{ paymentData.user.surname }}</p>
-            <p class="card-text">Email utente: {{ paymentData.user.mail }}</p>
-            <p class="card-text">Username utente: {{ paymentData.user.username }}</p>
+            <p class="card-text">Nome: {{ paymentData.user.name }}</p>
+            <p class="card-text">Cognome: {{ paymentData.user.surname }}</p>
+            <p class="card-text">Email: {{ paymentData.user.mail }}</p>
+            <p class="card-text">Username: {{ paymentData.user.username }}</p>
           </div>
           <div *ngIf="paymentData.payment">
             <p></p>
@@ -70,7 +75,7 @@
 
   <ng-container *ngIf="yearlyPaymentAmountsData">
     <div class="user-container mt-4">
-      <h2>Calcola pagamenti annuali</h2>
+      <h2>Pagamenti annuali cittadini</h2>
       <div class="card" *ngFor="let data of yearlyPaymentAmountsData">
         <div class="card-body">
           <div *ngIf="data.user">

@@ -13,8 +13,9 @@ public class Payment {
 
     @Id
     private String id;
-    private BigDecimal amount;
+    private Double amount;
     private Date paymentDate;
+    private Date emissionDate;
     private boolean paid;
     @Field("userId")
     private String userId;
@@ -27,11 +28,11 @@ public class Payment {
         this.id = id;
     }
 
-    public BigDecimal getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
@@ -57,5 +58,13 @@ public class Payment {
 
     public void setUserId(String usedId) {
         this.userId = usedId;
+    }
+
+    public Date getEmissionDate() {
+        return emissionDate;
+    }
+
+    public void setEmissionDate(Date emissionDate) {
+        this.emissionDate = emissionDate;
     }
 }

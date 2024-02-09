@@ -43,15 +43,19 @@ export class RegisterComponent {
 
     console.log(this.registerData);
 
-    this.http.post<any>(url, this.registerData, { headers: this.getHeaders() }).subscribe({
+    this.http.post<any>(url, this.registerData).subscribe({
       next: (response) => {
         // Registrazione avvenuta con successo
         this.successMessage = 'Registrazione avvenuta con successo!';
         this.errorMessage = '';
         this.loading = false;
         localStorage.setItem('jwtToken', response.token);
+        localStorage.setItem('id', response.id);
+        localStorage.setItem('username', response.username);
+
+
         // Reindirizza l'utente alla pagina di login
-        this.router.navigate(['/login']);
+        this.router.navigate(['/user-dashboard']);
       },
       error: (error) => {
         // Registrazione fallita
@@ -66,11 +70,5 @@ export class RegisterComponent {
         this.loading = false;
       }
     });
-  }
-
-  private getHeaders(): HttpHeaders {
-    let headers = new HttpHeaders();
-    headers = headers.append('Content-Type', 'application/json');
-    return headers;
   }
 }

@@ -1,0 +1,12 @@
+.header {
+  background-color: #007bff; /* Colore di sfondo */
+  color: #ffffff; /* Colore del testo */
+  padding: 20px; /* Spaziatura interna */
+  display: flex; /* Utilizza il layout flessibile */
+  justify-content: space-between; /* Allinea gli elementi ai lati opposti */
+  align-items: center; /* Allinea verticalmente al centro */
+}
+
+.header h1 {
+  margin: 0; /* Rimuovi il margine dal titolo */
+}

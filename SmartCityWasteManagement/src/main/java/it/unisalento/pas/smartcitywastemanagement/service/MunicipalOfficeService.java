@@ -2,17 +2,16 @@ package it.unisalento.pas.smartcitywastemanagement.service;
 
 import it.unisalento.pas.smartcitywastemanagement.domain.User;
 import it.unisalento.pas.smartcitywastemanagement.domain.WasteDisposal;
+import it.unisalento.pas.smartcitywastemanagement.dto.PaymentDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserWasteSeparationPerformanceDTO;
+import it.unisalento.pas.smartcitywastemanagement.repositories.PaymentRepository;
 import it.unisalento.pas.smartcitywastemanagement.repositories.UserRepository;
 import it.unisalento.pas.smartcitywastemanagement.repositories.WasteDisposalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,10 +21,16 @@ public class MunicipalOfficeService {
     private WasteDisposalRepository wasteDisposalRepository;
 
     @Autowired
+    private PaymentRepository paymentRepository;
+
+    @Autowired
     private WasteSeparationPerformanceService wasteSeparationPerformanceService;
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PaymentService paymentService;
 
     public Map<String, Double> calculateYearlyPaymentAmounts() {
         // Ottieni tutti gli utenti registrati nel comune
@@ -51,6 +56,30 @@ public class MunicipalOfficeService {
 
         return yearlyPaymentAmounts;
     }
+
+    public void erogatePayments() {
+        Map<String, Double> yearlyPaymentAmounts = calculateYearlyPaymentAmounts();
+
+        for (Map.Entry<String, Double> entry : yearlyPaymentAmounts.entrySet()) {
+            String userId = entry.getKey();
+            Double yearlyPaymentAmount = entry.getValue();
+
+            // Controlla se il pagamento esiste già per l'utente
+            if (paymentRepository.existsByUserIdAndPaid(userId, false)) {
+                // passa al prossimo utente
+                continue;
+            }
+
+            // Creazione di un pagamento per l'utente con l'importo calcolato
+            PaymentDTO paymentDTO = new PaymentDTO();
+            paymentDTO.setUserId(userId);
+            paymentDTO.setAmount(yearlyPaymentAmount);
+
+            paymentService.makePayment(paymentDTO);
+        }
+    }
+
+
 
     public List<UserDTO> identifyCitizensToAware() {
         // Ottieni tutti gli utenti da sensibilizzare (isAware = false)

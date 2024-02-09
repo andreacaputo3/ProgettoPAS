@@ -1,16 +1,27 @@
-<div>
+<div class="header">
+  <h1>Benvenuto, <span class="username">{{ localStorage.getItem('username') }}</span></h1>
+  <button class="btn btn-danger" (click)="logout()">Logout</button>
+</div>
+
+<div class="container">
   <h2>Crea un nuovo utente</h2>
   <form (submit)="createUser()">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" [(ngModel)]="userData.username" required>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" [(ngModel)]="userData.password" required>
-    <label for="role">Ruolo:</label>
-    <select id="role" name="role" [(ngModel)]="userData.role" required>
-      <option value="ADMIN_UFFICIO">ADMIN_UFFICIO</option>
-      <option value="ADMIN_AZIENDA">ADMIN_AZIENDA</option>
-      <option value="USER">USER</option>
-    </select>
-    <button type="submit">Crea utente</button>
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" [(ngModel)]="userData.username" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" [(ngModel)]="userData.password" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label for="role">Ruolo:</label>
+      <select id="role" name="role" [(ngModel)]="userData.role" class="form-control" required>
+        <option value="ADMIN_UFFICIO">ADMIN_UFFICIO</option>
+        <option value="ADMIN_AZIENDA">ADMIN_AZIENDA</option>
+        <option value="USER">USER</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Crea utente</button>
   </form>
 </div>

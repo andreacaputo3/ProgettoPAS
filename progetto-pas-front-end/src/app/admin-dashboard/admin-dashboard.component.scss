@@ -1,0 +1,24 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: #007bff;
+  color: #ffffff;
+  border-bottom: 1px solid #dee2e6;
+  .username {
+    font-weight: bold;
+    margin-left: 5px;
+  }
+}
+
+.header h1 {
+  margin: 0; /* Rimuovi il margine dal titolo */
+}
+
+.container {
+  padding: 20px;
+  .form-group {
+    margin-bottom: 20px;
+  }
+}

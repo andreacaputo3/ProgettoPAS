@@ -8,6 +8,7 @@ import it.unisalento.pas.smartcitywastemanagement.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -19,10 +20,21 @@ public class PaymentService {
     public void makePayment(PaymentDTO paymentDTO) {
         Payment payment = new Payment();
         payment.setAmount(paymentDTO.getAmount());
-        payment.setPaymentDate(paymentDTO.getPaymentDate());
+        payment.setPaymentDate(null);
+        payment.setEmissionDate(new Date());
         payment.setPaid(false);
         payment.setUserId(paymentDTO.getUserId());
 
+        paymentRepository.save(payment);
+    }
+
+    public void payPayment(String userId, String paymentId) {
+        Payment payment = paymentRepository.findByIdAndUserId(paymentId, userId);
+        if (payment == null) {
+            throw new UserNotFoundException("Pagamento non trovato per l'utente specificato");
+        }
+        payment.setPaymentDate(new Date());
+        payment.setPaid(true);
         paymentRepository.save(payment);
     }
 

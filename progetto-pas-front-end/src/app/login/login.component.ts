@@ -20,11 +20,11 @@ export class LoginComponent {
 
   login() {
     let url = `${environment.apiUrl}/users/login`;
-
-    this.http.post<any>(url, this.loginData, { headers: this.getHeaders() }).subscribe({
+    this.http.post<any>(url, this.loginData).subscribe({
       next: (response) => {
         localStorage.setItem('jwtToken', response.token);
         localStorage.setItem('username', this.loginData.username);
+        localStorage.setItem('id', response.id);
 
         // Esegui il reindirizzamento in base al ruolo
         switch (response.role) {
@@ -54,11 +54,4 @@ export class LoginComponent {
       }
     });
   }
-
-  private getHeaders(): HttpHeaders {
-    let headers = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('jwtToken')}`);
-    headers = headers.append("Content-Type", "application/json");
-    return headers;
-  }
-
 }

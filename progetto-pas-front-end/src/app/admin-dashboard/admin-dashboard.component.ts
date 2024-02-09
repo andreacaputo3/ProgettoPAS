@@ -2,6 +2,7 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {environment} from "../../enviroments/enviroments";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -16,7 +17,7 @@ export class AdminDashboardComponent {
   };
   error= '';
 
-  constructor(private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   createUser() {
     let url = `${environment.apiUrl}/admin/`;
@@ -51,4 +52,15 @@ export class AdminDashboardComponent {
     return headers;
   }
 
+  logout(): void {
+    // Rimuovi le credenziali memorizzate nel localStorage o esegui altre operazioni di logout necessarie
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('username');
+
+    // Reindirizza l'utente alla pagina di accesso o ad un'altra pagina appropriata
+    // Puoi utilizzare il Router per navigare a una nuova pagina
+    this.router.navigate(['/login']); // Assicurati di importare il Router e di iniettarlo nel costruttore del componente
+  }
+
+    protected readonly localStorage = localStorage;
 }

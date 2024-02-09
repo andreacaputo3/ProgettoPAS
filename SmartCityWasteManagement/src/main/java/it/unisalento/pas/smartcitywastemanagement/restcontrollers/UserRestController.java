@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -91,10 +92,11 @@ public class UserRestController {
 
             // Genera il token JWT per l'utente registrato
             var jwtToken = jwtUtilities.generateToken(registeredUser.getUsername());
-
             // Costruisci la mappa per includere il token JWT nella risposta
             HashMap<String, String> map = new HashMap<>();
             map.put("token", jwtToken);
+            map.put("id", registeredUser.getId());
+            map.put("username", registeredUser.getUsername());
 
             return new ResponseEntity<>(map, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -134,25 +136,46 @@ public class UserRestController {
 
     @GetMapping("/{id}/payments")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<List<Payment>> getAllPaymentsByUserId(@PathVariable String id) {
+    public ResponseEntity<?> getAllPaymentsByUserId(@PathVariable String id) {
         List<Payment> payments = paymentService.getAllPaymentsByUserId(id);
+        if (payments.isEmpty()) {
+            return new ResponseEntity<>("Nessun pagamento disponibile", HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(payments, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/payments/{paymentId}/pay")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public ResponseEntity<?> payPayment(@PathVariable String id, @PathVariable String paymentId) {
+        paymentService.payPayment(id, paymentId);
+
+        // Incapsula il messaggio di conferma in un oggetto JSON
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Pagamento effettuato con successo");
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/waste-separation-performance")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<UserWasteSeparationPerformanceDTO> getUserWasteSeparationPerformance(@PathVariable String id) {
+    public ResponseEntity<?> getUserWasteSeparationPerformance(@PathVariable String id) {
         // Verifica se l'utente esiste nel sistema
         if (!userRepository.existsById(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Utente non trovato", HttpStatus.NOT_FOUND);
         }
 
         // Calcola le prestazioni di separazione dei rifiuti per l'utente specificato
         UserWasteSeparationPerformanceDTO performanceDTO = wasteSeparationPerformanceService.calculateUserWasteSeparationPerformance(id);
 
+        // Verifica se le prestazioni sono disponibili
+        if (performanceDTO == null) {
+            return new ResponseEntity<>("Prestazioni non disponibili per l'utente", HttpStatus.NOT_FOUND);
+        }
+
         // Restituisci le prestazioni di separazione dei rifiuti
         return new ResponseEntity<>(performanceDTO, HttpStatus.OK);
     }
+
 
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();

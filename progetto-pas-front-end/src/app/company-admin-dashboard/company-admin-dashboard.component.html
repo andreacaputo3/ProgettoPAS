@@ -1,9 +1,13 @@
+<div class="header">
+  <h1>Benvenuto, {{ localStorage.getItem('username') }}</h1>
+  <button class="btn btn-danger" (click)="logout()">Logout</button>
+</div>
+
 <div class="container">
-  <h2 class="mt-4">Benvenuto, {{ localStorage.getItem('username') }}</h2>
   <p class="lead mt-2">Accedi alle sezioni dedicate premendo i pulsanti sottostanti.</p>
 
   <div class="button-container mt-4 mb-4">
-    <button class="btn btn-primary" style="margin-right: 10px;" (click)="checkWasteDisposals()">Verifica conferimenti</button>
+    <button class="btn btn-primary" style="margin-right: 10px;" (click)="checkWasteDisposals()">Verifica stato cassonetti</button>
     <button class="btn btn-primary" style="margin-right: 10px;" (click)="getBinsForMap()">Recupera cassonetti per la mappa</button>
     <button class="btn btn-primary" style="margin-right: 10px;" (click)="instantiateCleaningPaths()">Istanza percorsi di pulizia</button>
   </div>
@@ -15,6 +19,17 @@
   <div *ngIf="checkResult" class="result-container">
     <p class="alert alert-success">{{ checkResult }}</p>
   </div>
+  <div *ngIf="overloadedBins && overloadedBins.length > 0" class="overloaded-bins-container">
+      <h3>Cassonetti in sovrabbondanza:</h3>
+      <ul>
+        <li *ngFor="let bin of overloadedBins">
+          {{ bin.location }}
+          <button class="btn btn-primary" (click)="emptyBin(bin.id)">Svuota</button>
+          <div *ngIf="successMessage " class="alert alert-success">Cassonetto svuotato con successo!</div>
+        </li>
+      </ul>
+  </div>
+
 
   <div class="data-container">
     <ng-container *ngIf="binsForMap && binsForMap.length > 0">

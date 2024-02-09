@@ -42,6 +42,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         newUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         newUser.setRole("USER");
         newUser.setAwared(false);
+        newUser.setIncorrectDisposalCount(0);
 
         userRepository.save(newUser);
         return newUser;

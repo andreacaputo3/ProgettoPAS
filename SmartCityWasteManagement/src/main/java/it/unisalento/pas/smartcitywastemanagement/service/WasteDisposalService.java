@@ -7,9 +7,6 @@ import it.unisalento.pas.smartcitywastemanagement.domain.Bin;
 import it.unisalento.pas.smartcitywastemanagement.domain.User;
 import it.unisalento.pas.smartcitywastemanagement.domain.WasteDisposal;
 import it.unisalento.pas.smartcitywastemanagement.dto.WasteDisposalDTO;
-import it.unisalento.pas.smartcitywastemanagement.exceptions.BinFullException;
-import it.unisalento.pas.smartcitywastemanagement.exceptions.BinNotFoundException;
-import it.unisalento.pas.smartcitywastemanagement.exceptions.BinWasteTypeMismatchException;
 import it.unisalento.pas.smartcitywastemanagement.exceptions.UserNotFoundException;
 import it.unisalento.pas.smartcitywastemanagement.repositories.BinRepository;
 import it.unisalento.pas.smartcitywastemanagement.repositories.UserRepository;
@@ -29,7 +26,7 @@ public class WasteDisposalService {
     @Autowired
     private UserRepository userRepository;
 
-    public void saveWasteDisposal(WasteDisposalDTO wasteDisposalDTO) {
+    public boolean saveWasteDisposal(WasteDisposalDTO wasteDisposalDTO) {
         WasteDisposal wasteDisposal = new WasteDisposal();
 
         wasteDisposal.setBinId(wasteDisposalDTO.getBinId());
@@ -40,10 +37,10 @@ public class WasteDisposalService {
         wasteDisposal.setRecycled(false);
 
         Bin bin = binRepository.findById(wasteDisposalDTO.getBinId())
-                .orElseThrow(() -> new BinNotFoundException(wasteDisposalDTO.getBinId()));
+                .orElse(null);
 
         if (bin.isFull()) {
-            throw new BinFullException(bin.getLocation());
+            return false;
         }
 
         // Verifica se il tipo di conferimento non corrisponde al tipo del bidone
@@ -61,6 +58,8 @@ public class WasteDisposalService {
 
         // Aggiorno il peso del cassonetto
         updateBinCurrentWeight(bin);
+
+        return true; // Salvataggio effettuato con successo
     }
 
     private void updateBinCurrentWeight(Bin bin) {

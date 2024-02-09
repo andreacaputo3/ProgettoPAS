@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 import {environment} from "../../enviroments/enviroments";
 
 @Component({
@@ -18,7 +19,7 @@ export class OfficeAdminDashboardComponent {
   loadingWasteSeparationPerformance = false;
   loadingYearlyPaymentAmounts = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   getUsersToAware(): void {
     this.resetData();
@@ -84,6 +85,21 @@ export class OfficeAdminDashboardComponent {
     });
   }
 
+  erogateYearlyPayments(): void {
+    this.resetData();
+    let url = `${environment.apiUrl}/municipal-office/erogate-payments`;
+    this.http.post<any>(url, {}, { headers: this.getHeaders() }).subscribe({
+      next: (response) => {
+        console.log('Pagamenti annuali erogati con successo:', response);
+        this.calculateYearlyPaymentAmounts();
+      },
+      error: (error) => {
+        console.error('Errore durante l\'erogazione dei pagamenti annuali:', error);
+        this.loadingYearlyPaymentAmounts = false;
+      }
+    });
+  }
+
   private resetData(): void {
     this.usersToAwareData = null;
     this.paymentsStateData = null;
@@ -95,6 +111,16 @@ export class OfficeAdminDashboardComponent {
     let headers = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('jwtToken')}`);
     headers = headers.append("Content-Type", "application/json");
     return headers;
+  }
+
+  logout(): void {
+    // Rimuovi le credenziali memorizzate nel localStorage o esegui altre operazioni di logout necessarie
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('username');
+
+    // Reindirizza l'utente alla pagina di accesso o ad un'altra pagina appropriata
+    // Puoi utilizzare il Router per navigare a una nuova pagina
+    this.router.navigate(['/login']); // Assicurati di importare il Router e di iniettarlo nel costruttore del componente
   }
 
   protected readonly localStorage = localStorage;
