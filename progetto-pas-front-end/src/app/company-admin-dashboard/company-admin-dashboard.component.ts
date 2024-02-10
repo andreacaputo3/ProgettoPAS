@@ -12,10 +12,9 @@ export class CompanyAdminDashboardComponent {
   checkResult: string = '';
   binsForMap: any[] = [];
   cleaningPaths: any[] = [];
-  loadingData: boolean = false; // Aggiunta variabile per il caricamento dei dati
+  loadingData: boolean = false;
   overloadedBins: any[] = [];
   successMessage = '';
-
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -26,8 +25,6 @@ export class CompanyAdminDashboardComponent {
       .subscribe({
         next: (response) => {
           this.checkResult = response.message;
-          console.log(response.message);
-          console.log(response.overloadedBins);
           this.overloadedBins = response.overloadedBins;
           this.loadingData = false;
         },
@@ -100,13 +97,12 @@ export class CompanyAdminDashboardComponent {
   }
 
   logout(): void {
-    // Rimuovi le credenziali memorizzate nel localStorage o esegui altre operazioni di logout necessarie
+    // Rimuovo credenziali memorizzate nel localStorage
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('username');
 
-    // Reindirizza l'utente alla pagina di accesso o ad un'altra pagina appropriata
-    // Puoi utilizzare il Router per navigare a una nuova pagina
-    this.router.navigate(['/login']); // Assicurati di importare il Router e di iniettarlo nel costruttore del componente
+    // Reindirizzo utente al login
+    this.router.navigate(['/login']);
   }
 
 

@@ -30,18 +30,14 @@ export class RegisterComponent {
       this.errorMessage = 'Tutti i campi sono obbligatori.';
       return;
     }
-
-    // Controllo se l'età è un numero positivo
     if (this.registerData.age <= 0) {
       this.errorMessage = 'L\'età deve essere maggiore di 0.';
       return;
     }
 
-    // Se tutti i controlli passano, procedi con la registrazione
+    //effettiva registrazione
     this.loading = true;
     let url = `${environment.apiUrl}/users/register`;
-
-    console.log(this.registerData);
 
     this.http.post<any>(url, this.registerData).subscribe({
       next: (response) => {
@@ -53,8 +49,6 @@ export class RegisterComponent {
         localStorage.setItem('id', response.id);
         localStorage.setItem('username', response.username);
 
-
-        // Reindirizza l'utente alla pagina di login
         this.router.navigate(['/user-dashboard']);
       },
       error: (error) => {
@@ -63,7 +57,7 @@ export class RegisterComponent {
           // Errore di validazione dei dati inviati
           this.errorMessage = error.error;
         } else {
-          // Altro tipo di errore
+          // Altro errore
           this.errorMessage = 'Errore durante la registrazione. Si prega di riprovare.';
         }
         this.successMessage = '';

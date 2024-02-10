@@ -1,19 +1,31 @@
-<div class="header">
-  <h1>Benvenuto, {{ localStorage.getItem('username') }}</h1>
-  <button class="btn btn-danger" (click)="logout()">Logout</button>
+<div class="header bg-blue text-white py-3">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col">
+        <h1 class="m-0">Benvenuto, <span class="text-dark">{{ localStorage.getItem('username') }}</span></h1>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-danger" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="container">
-  <div class="user-container mt-4">
-    <h2>Pagamenti</h2>
+<div class="container mt-4">
+  <div class="user-container">
+    <h2 class="mb-3">Pagamenti</h2>
     <div *ngIf="paymentsData && paymentsData.length > 0">
-      <div class="card" *ngFor="let payment of paymentsData">
-        <div class="card-body">
-          <p class="card-text">Importo (€): {{ payment.amount }}</p>
-          <p class="card-text">Data Emissione: {{ payment.emissionDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
-          <p class="card-text">Data Pagamento: {{ payment.paymentDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
-          <p class="card-text">Stato Pagamento: {{ payment.paid ? 'Pagato' : 'Non Pagato' }}</p>
-          <button *ngIf="!payment.paid" class="btn btn-primary" (click)="payPayment(payment.id)">Paga</button>
+      <div class="row">
+        <div class="col-md-6 col-lg-4" *ngFor="let payment of paymentsData">
+          <div class="card mb-3">
+            <div class="card-body">
+              <p class="card-text">Importo (€): {{ payment.amount }}</p>
+              <p class="card-text">Data Emissione: {{ payment.emissionDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+              <p class="card-text">Data Pagamento: {{ payment.paymentDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+              <p class="card-text">Stato Pagamento: <span [ngClass]="{'text-success': payment.paid, 'text-danger': !payment.paid}">{{ payment.paid ? 'Pagato' : 'Non Pagato' }}</span></p>
+              <button *ngIf="!payment.paid" class="btn btn-primary btn-sm" (click)="payPayment(payment.id)">Paga</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -23,9 +35,9 @@
   </div>
 
   <div class="user-container mt-4">
-    <h2>Prestazioni di separazione dei rifiuti</h2>
+    <h2 class="mb-3">Prestazioni di separazione dei rifiuti</h2>
     <div *ngIf="wasteSeparationPerformanceData">
-      <div class="card">
+      <div class="card mb-3">
         <div class="card-body">
           <p class="card-text">Numero Totale di Smaltimenti: {{ wasteSeparationPerformanceData.totalDisposals }}</p>
           <p class="card-text">Numero di Smaltimenti Incorretti: {{ wasteSeparationPerformanceData.incorrectDisposalCount }}</p>
@@ -35,13 +47,14 @@
               {{ wasteType }}: {{ wasteSeparationPerformanceData.wasteTypeCounts[wasteType] }}
             </li>
           </ul>
-          <p *ngIf="!wasteSeparationPerformanceData.wasteTypeCounts || Object.keys(wasteSeparationPerformanceData.wasteTypeCounts).length === 0" class="card-text"></p>
+          <p *ngIf="!wasteSeparationPerformanceData.wasteTypeCounts || Object.keys(wasteSeparationPerformanceData.wasteTypeCounts).length === 0" class="card-text">Nessun dato disponibile</p>
         </div>
       </div>
     </div>
   </div>
 
-  <form>
+  <form class="user-container mt-4">
+    <h2 class="mb-3">Registra Uno Smaltimento</h2>
     <div class="form-group">
       <label for="location">Seleziona la locazione del cassonetto</label>
       <select class="form-control" id="location" [(ngModel)]="disposalData.binId" [ngModelOptions]="{standalone: true}">
@@ -65,7 +78,8 @@
     </div>
     <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
     <div *ngIf="responseMessage" class="alert alert-success mt-3">{{ responseMessage }}</div>
-    <button type="button" class="btn btn-primary" (click)="submitConferimento()">Conferisci</button>
+    <button type="button" class="btn btn-primary mt-3" (click)="submitDisposal()">Conferisci</button>
+    <p></p>
   </form>
 
 </div>

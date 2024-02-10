@@ -1,21 +1,16 @@
 package it.unisalento.pas.smartcitywastemanagement.restcontrollers;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import it.unisalento.pas.smartcitywastemanagement.domain.Payment;
 import it.unisalento.pas.smartcitywastemanagement.domain.User;
 import it.unisalento.pas.smartcitywastemanagement.dto.LoginDTO;
-import it.unisalento.pas.smartcitywastemanagement.dto.PaymentDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserDTO;
 import it.unisalento.pas.smartcitywastemanagement.dto.UserWasteSeparationPerformanceDTO;
-import it.unisalento.pas.smartcitywastemanagement.exceptions.PaymentNotFoundException;
 import it.unisalento.pas.smartcitywastemanagement.exceptions.UserNotFoundException;
 import it.unisalento.pas.smartcitywastemanagement.repositories.UserRepository;
 import it.unisalento.pas.smartcitywastemanagement.security.JwtUtilities;
 import it.unisalento.pas.smartcitywastemanagement.service.CustomUserDetailsService;
 import it.unisalento.pas.smartcitywastemanagement.service.PaymentService;
-import it.unisalento.pas.smartcitywastemanagement.service.WasteDisposalService;
 import it.unisalento.pas.smartcitywastemanagement.service.WasteSeparationPerformanceService;
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +19,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -57,13 +51,24 @@ public class UserRestController {
 
     @GetMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
+    public ResponseEntity<?> getAll() {
         List<User> users = userRepository.findAll();
         List<UserDTO> userDTOs = users.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(userDTOs, HttpStatus.OK);
     }
+
+    @GetMapping("/get-all")
+    @PreAuthorize("hasAnyRole('ADMIN','ADMIN_UFFICIO')")
+    public ResponseEntity<?> getAllUsers() {
+        List<User> users = userRepository.findAllByRole("USER"); // Filtra gli utenti per ruolo "USER"
+        List<UserDTO> userDTOs = users.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(userDTOs, HttpStatus.OK);
+    }
+
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -75,6 +80,24 @@ public class UserRestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','ADMIN_UFFICIO')")
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+        // Controlla se l'utente esiste nel sistema
+        if (!userRepository.existsById(id)) {
+            return new ResponseEntity<>("Utente non trovato", HttpStatus.NOT_FOUND);
+        }
+
+        // Elimina l'utente dal repository
+        userRepository.deleteById(id);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Utente eliminato con successo");
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
@@ -145,7 +168,7 @@ public class UserRestController {
     }
 
     @PostMapping("/{id}/payments/{paymentId}/pay")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> payPayment(@PathVariable String id, @PathVariable String paymentId) {
         paymentService.payPayment(id, paymentId);
 

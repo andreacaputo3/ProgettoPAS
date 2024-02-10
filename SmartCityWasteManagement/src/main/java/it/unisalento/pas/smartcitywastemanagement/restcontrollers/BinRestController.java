@@ -22,14 +22,16 @@ public class BinRestController {
     private BinService binService;
 
     @PostMapping("/create")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Bin> createBin(@RequestBody BinDTO binDTO) {
+    @PreAuthorize("hasAnyRole('ADMIN','ADMIN_UFFICIO')")
+    public ResponseEntity<?> createBin(@RequestBody BinDTO binDTO) {
         Bin createdBin = binService.createBin(binDTO);
-        return new ResponseEntity<>(createdBin, HttpStatus.CREATED);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Cassonetto aggiunto.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Bin>> getAllBinLocations() {
+    public ResponseEntity<?> getAllBinLocations() {
         List<Bin> bins = binService.getAllBins();
         return new ResponseEntity<>(bins, HttpStatus.OK);
     }

@@ -1,4 +1,3 @@
-// admin-dashboard.component.ts
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {environment} from "../../enviroments/enviroments";
@@ -16,8 +15,46 @@ export class AdminDashboardComponent {
     role: ''
   };
   error= '';
+  usersData: any;
+  loadingUsers = false;
 
   constructor(private router: Router, private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.getAllUsers();
+  }
+
+  getAllUsers(): void {
+    this.loadingUsers = true;
+    let url = `${environment.apiUrl}/users/`;
+    this.http.get<any>(url, { headers: this.getHeaders() }).subscribe({
+      next: (response) => {
+        this.usersData = response;
+        this.loadingUsers = false;
+      },
+      error: (error) => {
+        console.error('Errore durante il recupero degli utenti:', error);
+        this.loadingUsers = false;
+      }
+    });
+  }
+
+  deleteUser(userId: string): void {
+    if (confirm('Sei sicuro di voler eliminare questo utente?')) {
+      let url = `${environment.apiUrl}/users/delete/${userId}`;
+      this.http.delete<any>(url, { headers: this.getHeaders() }).subscribe({
+        next: (response) => {
+          // Aggiorno lista utenti
+          this.getAllUsers();
+
+        },
+        error: (error) => {
+          console.error('Errore durante l\'eliminazione dell\'utente:', error);
+          // Gestisci l'errore in base alle tue esigenze
+        }
+      });
+    }
+  }
 
   createUser() {
     let url = `${environment.apiUrl}/admin/`;
@@ -30,18 +67,17 @@ export class AdminDashboardComponent {
         break;
       default:
         console.error('Ruolo non gestito:', this.userData.role);
-        return; // Esce dalla funzione in caso di ruolo non gestito
+        return;
     }
 
     this.http.post<any>(url, this.userData, { headers: this.getHeaders() })
       .subscribe({
         next: (response) => {
-          console.log('Nuovo utente creato:', response);
-          // Aggiorna l'interfaccia utente in base alla risposta del backend
+          this.getAllUsers();
         },
         error: (error) => {
           console.error('Errore durante la creazione dell\'utente:', error);
-          // Gestisci l'errore e aggiorna l'interfaccia utente
+
         }
       });
   }
@@ -53,13 +89,12 @@ export class AdminDashboardComponent {
   }
 
   logout(): void {
-    // Rimuovi le credenziali memorizzate nel localStorage o esegui altre operazioni di logout necessarie
+    // Rimuovo credenziali memorizzate nel localStorage
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('username');
 
-    // Reindirizza l'utente alla pagina di accesso o ad un'altra pagina appropriata
-    // Puoi utilizzare il Router per navigare a una nuova pagina
-    this.router.navigate(['/login']); // Assicurati di importare il Router e di iniettarlo nel costruttore del componente
+    // Reindirizzo a login
+    this.router.navigate(['/login']);
   }
 
     protected readonly localStorage = localStorage;

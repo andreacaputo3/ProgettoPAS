@@ -1,15 +1,23 @@
-<div class="header">
-  <h1>Benvenuto, {{ localStorage.getItem('username') }}</h1>
-  <button class="btn btn-danger" (click)="logout()">Logout</button>
+<div class="header bg-primary text-white py-3">
+  <div class="container">
+    <div class="row justify-content-between align-items-center">
+      <div class="col-auto">
+        <h1 class="m-0">Benvenuto, <span class="text-light">{{ localStorage.getItem('username') }}</span></h1>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-danger" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="container">
-  <p class="lead mt-2">Accedi alle sezioni dedicate premendo i pulsanti sottostanti.</p>
+<div class="container mt-4">
+  <p class="lead text-center">Accedi alle sezioni dedicate premendo i pulsanti sottostanti.</p>
 
   <div class="button-container mt-4 mb-4">
-    <button class="btn btn-primary" style="margin-right: 10px;" (click)="checkWasteDisposals()">Verifica stato cassonetti</button>
-    <button class="btn btn-primary" style="margin-right: 10px;" (click)="getBinsForMap()">Recupera cassonetti per la mappa</button>
-    <button class="btn btn-primary" style="margin-right: 10px;" (click)="instantiateCleaningPaths()">Istanza percorsi di pulizia</button>
+    <button class="btn btn-primary mr-2" (click)="checkWasteDisposals()">Verifica stato cassonetti</button>
+    <button class="btn btn-primary mr-2" (click)="getBinsForMap()">Recupera cassonetti per la mappa</button>
+    <button class="btn btn-primary" (click)="instantiateCleaningPaths()">Istanza percorsi di pulizia</button>
   </div>
 
   <div *ngIf="loadingData" class="loading-container">
@@ -19,33 +27,35 @@
   <div *ngIf="checkResult" class="result-container">
     <p class="alert alert-success">{{ checkResult }}</p>
   </div>
-  <div *ngIf="overloadedBins && overloadedBins.length > 0" class="overloaded-bins-container">
-      <h3>Cassonetti in sovrabbondanza:</h3>
-      <ul>
-        <li *ngFor="let bin of overloadedBins">
-          {{ bin.location }}
-          <button class="btn btn-primary" (click)="emptyBin(bin.id)">Svuota</button>
-          <div *ngIf="successMessage " class="alert alert-success">Cassonetto svuotato con successo!</div>
-        </li>
-      </ul>
+
+  <div *ngIf="overloadedBins && overloadedBins.length > 0" class="overloaded-bins-container mt-4">
+    <h3 class="text-danger">Cassonetti in sovrabbondanza:</h3>
+    <ul class="list-group">
+      <li *ngFor="let bin of overloadedBins" class="list-group-item d-flex justify-content-between align-items-center">
+        {{ bin.location }}
+        <button class="btn btn-primary" (click)="emptyBin(bin.id)">Svuota</button>
+        <div *ngIf="successMessage " class="alert alert-success">Cassonetto svuotato con successo!</div>
+      </li>
+    </ul>
   </div>
 
-
-  <div class="data-container">
+  <div class="data-container mt-4">
     <ng-container *ngIf="binsForMap && binsForMap.length > 0">
       <h3 class="mt-4">Cassonetto attivo:</h3>
-      <ng-container *ngFor="let bin of binsForMap">
-        <div class="map-container">
-          <div class="card">
-            <div class="card-body">
-              <p class="card-text">Posizione: {{ bin.location }}</p>
-              <p class="card-text">Latitudine: {{ bin.latitude }}</p>
-              <p class="card-text">Longitudine: {{ bin.longitude }}</p>
-              <p class="card-text">Stato: {{ bin.status }}</p>
+      <div class="map-container">
+        <div class="row">
+          <div class="col-md-4" *ngFor="let bin of binsForMap">
+            <div class="card mb-4">
+              <div class="card-body">
+                <p class="card-text">Posizione: {{ bin.location }}</p>
+                <p class="card-text">Latitudine: {{ bin.latitude }}</p>
+                <p class="card-text">Longitudine: {{ bin.longitude }}</p>
+                <p class="card-text">Stato: {{ bin.status }}</p>
+              </div>
             </div>
           </div>
         </div>
-      </ng-container>
+      </div>
     </ng-container>
 
     <ng-container *ngFor="let path of cleaningPaths">
@@ -68,6 +78,5 @@
         </div>
       </div>
     </ng-container>
-
   </div>
 </div>

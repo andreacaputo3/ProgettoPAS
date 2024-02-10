@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {environment} from "../../enviroments/enviroments";
 
-
 @Component({
   selector: 'app-login',
   templateUrl: 'login.component.html',
@@ -11,7 +10,7 @@ import {environment} from "../../enviroments/enviroments";
 })
 export class LoginComponent {
   loginData = {
-    username: '', // Assicurati che 'username' sia il nome corretto del campo utilizzato dal backend
+    username: '',
     password: ''
   };
   error = '';
@@ -42,14 +41,11 @@ export class LoginComponent {
             break;
           default:
             console.error('Ruolo non gestito:', response.role);
-            // Reindirizza a una pagina predefinita o gestisci il caso in modo appropriato
             break;
         }
       },
       error: (error) => {
-        // Gestisci l'errore e visualizza un messaggio appropriato all'utente
         console.error('Errore durante il login:', error);
-        // Mostra un messaggio di errore all'utente
         this.error = 'Credenziali non valide. Riprova.';
       }
     });

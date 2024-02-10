@@ -13,14 +13,47 @@ export class OfficeAdminDashboardComponent {
   paymentsStateData: any;
   wasteSeparationPerformanceData: any;
   yearlyPaymentAmountsData: any;
+  binsData: any;
+  usersData: any;
 
+  loadingUsers = false;
+  loadingBins = false;
   loadingUsersToAware = false;
   loadingPaymentsState = false;
   loadingWasteSeparationPerformance = false;
   loadingYearlyPaymentAmounts = false;
+  loadingBinForm: boolean = false;
+
+  errorMessage = '';
+  responseMessage = '';
+  newBin: any = {
+    location: null,
+    latitude: null,
+    longitude: '',
+    type: '',
+    maxWeight: null
+  };
 
   constructor(private router: Router, private http: HttpClient) {}
 
+  ngOnInit(): void {
+    this.getAllUsers();
+  }
+
+  getAllUsers(): void {
+    this.loadingUsers = true;
+    let url = `${environment.apiUrl}/users/get-all`;
+    this.http.get<any>(url, { headers: this.getHeaders() }).subscribe({
+      next: (response) => {
+        this.usersData = response;
+        this.loadingUsers = false;
+      },
+      error: (error) => {
+        console.error('Errore durante il recupero degli utenti:', error);
+        this.loadingUsers = false;
+      }
+    });
+  }
   getUsersToAware(): void {
     this.resetData();
     this.loadingUsersToAware = true;
@@ -100,7 +133,71 @@ export class OfficeAdminDashboardComponent {
     });
   }
 
+  showBinForm(): void {
+    this.resetData();
+    this.loadingBinForm = true;
+  }
+  createBin(): void {
+    if (!this.newBin || !this.newBin.type || !this.newBin.maxWeight || !this.newBin.location || !this.newBin.longitude || !this.newBin.latitude) {
+      console.error('Compilare tutti i campi prima di conferire il rifiuto.');
+      this.errorMessage = "Compilare tutti i campi prima di creare il cassonetto.";
+      return;
+    }
+    let url = `${environment.apiUrl}/bins/create`;
+    console.log(this.newBin);
+    this.http.post<any>(url, this.newBin, { headers: this.getHeaders() }).subscribe({
+      next: (response) => {
+        this.errorMessage = '';
+        this.responseMessage = 'Cassonetto inserito.';
+        this.newBin.location = null;
+        this.newBin.latitude = null;
+        this.newBin.longitude = '';
+        this.newBin.type = '';
+        this.newBin.maxWeight = null;
+      },
+      error: (error) => {
+        console.error('Errore durante la creazione del cassonetto:', error);
+        this.errorMessage = 'Errore inserimento';
+        this.responseMessage = '';
+      }
+    });
+  }
+
+  deleteUser(userId: string): void {
+    if (confirm('Sei sicuro di voler eliminare questo utente?')) {
+      let url = `${environment.apiUrl}/users/delete/${userId}`;
+      this.http.delete<any>(url, { headers: this.getHeaders() }).subscribe({
+        next: (response) => {
+          console.log('Utente eliminato con successo:', response);
+          this.getAllUsers();
+          // Aggiorna la lista degli utenti o esegui altre operazioni necessarie dopo l'eliminazione
+        },
+        error: (error) => {
+          console.error('Errore durante l\'eliminazione dell\'utente:', error);
+          // Gestisci l'errore in base alle tue esigenze
+        }
+      });
+    }
+  }
+
+  getAllBinLocations(): void {
+    this.resetData();
+    this.loadingBins = true;
+    let url = `${environment.apiUrl}/bins/`;
+    this.http.get<any>(url, { headers: this.getHeaders() }).subscribe({
+      next: (response) => {
+        this.binsData = response;
+        this.loadingBins = false;
+      },
+      error: (error) => {
+        console.error('Errore durante il recupero dei cassonetti:', error);
+        this.loadingBins = false;
+      }
+    });
+  }
+
   private resetData(): void {
+    this.loadingBinForm = false;
     this.usersToAwareData = null;
     this.paymentsStateData = null;
     this.wasteSeparationPerformanceData = null;
@@ -114,13 +211,12 @@ export class OfficeAdminDashboardComponent {
   }
 
   logout(): void {
-    // Rimuovi le credenziali memorizzate nel localStorage o esegui altre operazioni di logout necessarie
+    // Rimuovo credenziali memorizzate nel localStorage
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('username');
 
-    // Reindirizza l'utente alla pagina di accesso o ad un'altra pagina appropriata
-    // Puoi utilizzare il Router per navigare a una nuova pagina
-    this.router.navigate(['/login']); // Assicurati di importare il Router e di iniettarlo nel costruttore del componente
+    // Reindirizzo utente al login
+    this.router.navigate(['/login']);
   }
 
   protected readonly localStorage = localStorage;

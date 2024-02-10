@@ -42,7 +42,7 @@ export class UserDashboardComponent {
     });
   }
 
-  submitConferimento(): void {
+  submitDisposal(): void {
     if (!this.disposalData || !this.disposalData.binId || !this.disposalData.wasteType || !this.disposalData.weight) {
       console.error('Compilare tutti i campi prima di conferire il rifiuto.');
       this.errorMessage = "Compilare tutti i campi prima di conferire il rifiuto.";
@@ -114,13 +114,12 @@ export class UserDashboardComponent {
   }
 
   logout(): void {
-    // Rimuovi le credenziali memorizzate nel localStorage o esegui altre operazioni di logout necessarie
+    // Rimuovo credenziali memorizzate nel localStorage
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('username');
 
-    // Reindirizza l'utente alla pagina di accesso o ad un'altra pagina appropriata
-    // Puoi utilizzare il Router per navigare a una nuova pagina
-    this.router.navigate(['/login']); // Assicurati di importare il Router e di iniettarlo nel costruttore del componente
+    // Reindirizzo utente al login
+    this.router.navigate(['/login']);
   }
 
   protected readonly Object = Object;

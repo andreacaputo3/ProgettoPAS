@@ -31,6 +31,7 @@ public class BinService {
         bin.setCurrentWeight(BigDecimal.valueOf(0.0));
         bin.setLatitude(binDTO.getLatitude());
         bin.setLongitude(binDTO.getLongitude());
+        bin.setCurrentWeight(BigDecimal.valueOf(0));
 
         return binRepository.save(bin);
     }

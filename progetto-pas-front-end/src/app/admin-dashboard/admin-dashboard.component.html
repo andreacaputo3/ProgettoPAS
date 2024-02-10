@@ -1,27 +1,57 @@
-<div class="header">
-  <h1>Benvenuto, <span class="username">{{ localStorage.getItem('username') }}</span></h1>
-  <button class="btn btn-danger" (click)="logout()">Logout</button>
+<div class="header bg-primary text-white py-3">
+  <div class="container">
+    <div class="row justify-content-between align-items-center">
+      <div class="col-auto">
+        <h1 class="m-0">Benvenuto, <span class="text-light">{{ localStorage.getItem('username') }}</span></h1>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-danger" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="container">
-  <h2>Crea un nuovo utente</h2>
-  <form (submit)="createUser()">
-    <div class="form-group">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" [(ngModel)]="userData.username" class="form-control" required>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="mb-4">Crea un nuovo admin</h2>
+      <form (submit)="createUser()">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" [(ngModel)]="userData.username" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" [(ngModel)]="userData.password" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="role">Ruolo:</label>
+          <select id="role" name="role" [(ngModel)]="userData.role" class="form-control" required>
+            <option value="ADMIN_UFFICIO">ADMIN_UFFICIO</option>
+            <option value="ADMIN_AZIENDA">ADMIN_AZIENDA</option>
+            <option value="USER">USER</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Crea utente</button>
+      </form>
     </div>
-    <div class="form-group">
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" [(ngModel)]="userData.password" class="form-control" required>
+
+    <div *ngIf="usersData" class="user-container mt-4">
+      <h2>Lista Utenti</h2>
+      <div class="row">
+        <div class="col-md-6" *ngFor="let user of usersData">
+          <div class="card mb-3">
+            <div class="card-body">
+              <p class="card-text">Nome: {{ user.name }}</p>
+              <p class="card-text">Cognome: {{ user.surname }}</p>
+              <p class="card-text">Email: {{ user.mail }}</p>
+              <p class="card-text">Età: {{ user.age }}</p>
+              <p class="card-text">Username: {{ user.username }}</p>
+              <button class="btn btn-danger" (click)="deleteUser(user.id)">Elimina</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="role">Ruolo:</label>
-      <select id="role" name="role" [(ngModel)]="userData.role" class="form-control" required>
-        <option value="ADMIN_UFFICIO">ADMIN_UFFICIO</option>
-        <option value="ADMIN_AZIENDA">ADMIN_AZIENDA</option>
-        <option value="USER">USER</option>
-      </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Crea utente</button>
-  </form>
+  </div>
 </div>

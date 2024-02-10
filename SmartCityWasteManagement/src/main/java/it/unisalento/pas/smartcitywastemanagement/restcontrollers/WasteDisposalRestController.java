@@ -34,7 +34,6 @@ public class WasteDisposalRestController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-
         Map<String, String> response = new HashMap<>();
         response.put("message", "Conferimento effettuato con successo");
         return new ResponseEntity<>(response, HttpStatus.OK);
