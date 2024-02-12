@@ -79,10 +79,7 @@ public class MunicipalOfficeService {
         }
     }
 
-
-
     public List<UserDTO> identifyCitizensToAware() {
-        // Ottieni tutti gli utenti da sensibilizzare (isAware = false)
         List<User> usersToEducate = userRepository.findByIsAwared(false);
 
         // Converte gli utenti in DTO
@@ -96,10 +93,6 @@ public class MunicipalOfficeService {
     public UserWasteSeparationPerformanceDTO analyzeWasteSeparationPerformance() {
         // Ottieni tutti gli utenti registrati nel comune
         List<User> users = userRepository.findAll();
-
-        if (users.isEmpty()) {
-         //da finire
-        }
 
         // Variabili per memorizzare le statistiche aggregate
         int totalDisposals = 0;
@@ -139,6 +132,8 @@ public class MunicipalOfficeService {
         userDTO.setAge(user.getAge());
         userDTO.setUsername(user.getUsername());
         userDTO.setRole(user.getRole());
+        userDTO.setIncorrectDisposalCount(user.getIncorrectDisposalCount());
+        userDTO.setAwared(user.getAwared());
         return userDTO;
     }
 

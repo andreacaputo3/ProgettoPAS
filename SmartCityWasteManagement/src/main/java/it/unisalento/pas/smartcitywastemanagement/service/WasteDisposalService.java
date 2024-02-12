@@ -49,6 +49,7 @@ public class WasteDisposalService {
             User user = userRepository.findById(wasteDisposalDTO.getUserId())
                     .orElseThrow(() -> new UserNotFoundException(wasteDisposalDTO.getUserId()));
             user.setIncorrectDisposalCount(user.getIncorrectDisposalCount() + 1);
+            user.setAwared(false);
             userRepository.save(user);
             //finire con eccezioni
         }

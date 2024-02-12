@@ -91,12 +91,11 @@ public class UserRestController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','ADMIN_UFFICIO')")
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
-        // Controlla se l'utente esiste nel sistema
         if (!userRepository.existsById(id)) {
             return new ResponseEntity<>("Utente non trovato", HttpStatus.NOT_FOUND);
         }
 
-        // Elimina l'utente dal repository
+        // Elimino utente dal repository
         userRepository.deleteById(id);
 
         Map<String, String> response = new HashMap<>();
@@ -138,9 +137,6 @@ public class UserRestController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDTO) {
-        System.out.println(loginDTO.getUsername());
-        System.out.println(loginDTO.getPassword());
-
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -148,9 +144,7 @@ public class UserRestController {
                             loginDTO.getPassword()
                     )
             );
-            System.out.println("ciao2");
             User authenticatedUser = userRepository.findByUsername(authentication.getName());
-            System.out.println("ciao3");
 
             if (authenticatedUser != null) {
                 var jwtToken = jwtUtilities.generateToken(authenticatedUser.getUsername());
@@ -211,7 +205,6 @@ public class UserRestController {
         return new ResponseEntity<>(performanceDTO, HttpStatus.OK);
     }
 
-
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
@@ -221,6 +214,8 @@ public class UserRestController {
         userDTO.setAge(user.getAge());
         userDTO.setUsername(user.getUsername());
         userDTO.setRole(user.getRole());
+        userDTO.setIncorrectDisposalCount(user.getIncorrectDisposalCount());
+        userDTO.setAwared(user.getAwared());
         return userDTO;
     }
 }

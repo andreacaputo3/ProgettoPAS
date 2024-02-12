@@ -29,12 +29,24 @@
       <ng-container *ngFor="let route of routeData; let i = index">
         <div class="card mb-3">
           <div class="card-body">
-            <h5 class="card-title" *ngIf="route.position === 0 || i === 0">Percorso: {{ getRouteCounter(i) }}</h5>
+            <ng-container *ngIf="i === 0 || route.pathName !== routeData[i - 1]?.pathName">
+              <p>Nome percorso: <span><strong>{{ route.pathName }}</strong></span></p>
+            </ng-container>
             <p class="card-text">Location: {{ route.binLocation }}</p>
           </div>
         </div>
       </ng-container>
+      <div class="row">
+        <div class="col-md-6">
+          <label for="routeNameInput">Inserisci il nome del percorso da cancellare:</label>
+          <input type="text" id="routeNameInput" class="form-control" [(ngModel)]="routeNameToDelete">
+          <button class="btn btn-danger mt-3" (click)="deleteRouteByName()">Cancella percorso</button>
+        </div>
+      </div>
     </div>
+  </div>
+  <div *ngIf="noPathMessage" class="alert alert-info mt-4">
+    {{ noPathMessage }}
   </div>
 
   <div *ngIf="checkResult" class="result-container">
@@ -47,9 +59,9 @@
       <li *ngFor="let bin of overloadedBins" class="list-group-item d-flex justify-content-between align-items-center">
         {{ bin.location }}
         <button class="btn btn-primary" (click)="emptyBin(bin.id)">Svuota</button>
-        <div *ngIf="successMessage " class="alert alert-success">{{ successMessage }}</div>
       </li>
     </ul>
+    <div *ngIf="successMessage " class="alert alert-success">{{ successMessage }}</div>
   </div>
 
   <div class="row">
@@ -58,6 +70,7 @@
       <div class="card" *ngFor="let bin of binsForMap">
         <div class="card-body">
           <p class="card-text">Posizione: {{ bin.location }}</p>
+          <p class="card-text">Peso attuale: {{ bin.currentWeight }}</p>
           <button class="btn btn-primary" (click)="selectBin(bin)">Seleziona</button>
         </div>
       </div>
@@ -70,10 +83,14 @@
           <button class="btn btn-danger" (click)="removeSelectedBin(selectedBin)">Rimuovi</button>
         </div>
       </div>
-      <button class="btn btn-primary" (click)="saveCleaningPaths()">Salva ordine e genera percorsi di pulizia</button>
-      <div *ngIf="successMessagePath " class="alert alert-success"> {{ successMessagePath }} </div>
+      <div class="form-group">
+        <label for="pathName">Nome del percorso:</label>
+        <input type="text" class="form-control" id="pathName" [(ngModel)]="pathName">
+        <p></p>
+        <button class="btn btn-primary" (click)="saveCleaningPaths()">Salva ordine e genera percorsi di pulizia</button>
+      </div>
+      <div *ngIf="successMessagePath" class="alert alert-success">{{ successMessagePath }}</div>
     </div>
-    <p></p>
   </div>
 
-</div>
+  </div>

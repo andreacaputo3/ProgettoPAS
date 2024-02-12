@@ -23,7 +23,6 @@ public class AdminController {
     @Autowired
     private JwtUtilities jwtUtilities;
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/register-company-admin")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerAziendaAdmin(@RequestBody UserDTO adminDTO) {
@@ -39,7 +38,6 @@ public class AdminController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/register-office-admin")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> registerUfficioAdmin(@RequestBody UserDTO adminDTO) {

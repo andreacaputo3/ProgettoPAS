@@ -11,7 +11,7 @@ public class Route {
     private String id;
     @Field("binId")
     private String binId;
-    private int position;
+    private String pathName;
 
     public String getId() {
         return id;
@@ -29,11 +29,11 @@ public class Route {
         this.binId = binId;
     }
 
-    public int getPosition() {
-        return position;
+    public String getPathName() {
+        return pathName;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public void setPathName(String pathName) {
+        this.pathName = pathName;
     }
 }

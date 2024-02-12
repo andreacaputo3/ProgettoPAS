@@ -47,7 +47,7 @@ public class BinService {
         bin.setFull(false);
         bin.setCurrentWeight(BigDecimal.ZERO);
         binRepository.save(bin);
-        // Aggiorna lo stato dei disposal associati al bin
+        // Aggiorno lo stato dei disposal associati al bin
         updateDisposalsAfterBinEmpty(binId);
     }
 
@@ -57,10 +57,6 @@ public class BinService {
             disposal.setRecycled(true);
             wasteDisposalRepository.save(disposal);
         }
-    }
-
-    public List<Bin> getBinsByIds(List<String> binIds) {
-        return binRepository.findAllById(binIds);
     }
 
     public Bin getBinById(String binId) {

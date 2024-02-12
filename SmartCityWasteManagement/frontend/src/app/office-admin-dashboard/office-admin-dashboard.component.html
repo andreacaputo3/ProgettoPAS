@@ -34,7 +34,11 @@
         <p class="alert alert-info">Caricamento in corso...</p>
       </div>
 
-      <div *ngIf="usersToAwareData" class="user-container mt-4">
+      <div *ngIf="checkResult" class="result-container">
+        <p class="alert alert-success">{{ checkResult }}</p>
+      </div>
+
+      <div *ngIf="!loadingUsersToAware && usersToAwareData && usersToAwareData.length > 0" class="user-container mt-4">
         <h2>Cittadini da sensibilizzare</h2>
         <div class="row">
           <div class="col-md-6" *ngFor="let user of usersToAwareData">
@@ -45,6 +49,8 @@
                 <p class="card-text">Email: {{ user.mail }}</p>
                 <p class="card-text">Età: {{ user.age }}</p>
                 <p class="card-text">Username: {{ user.username }}</p>
+                <p class="card-text">Errori nello smaltimento: {{ user.incorrectDisposalCount }}</p>
+                <button class="btn btn-primary" (click)="markUserAsAwared(user.id)">Segna come sensibilizzato</button>
               </div>
             </div>
           </div>

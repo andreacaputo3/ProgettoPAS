@@ -7,6 +7,5 @@ import java.util.List;
 
 @Repository
 public interface CleaningPathRepository extends MongoRepository<CleaningPath, String> {
-    // In questa interfaccia non è necessario aggiungere metodi personalizzati se si utilizzano solo le operazioni CRUD di base fornite da MongoRepository.
-    // Tuttavia, è possibile aggiungere metodi personalizzati se necessario.
+
 }

@@ -9,4 +9,6 @@ import java.util.List;
 public interface RouteRepository extends MongoRepository<Route, String> {
     // Aggiungi un metodo per recuperare i percorsi di pulizia per un determinato binId
     List<Route> findByBinId(String binId);
+
+    void deleteByPathName(String pathName);
 }

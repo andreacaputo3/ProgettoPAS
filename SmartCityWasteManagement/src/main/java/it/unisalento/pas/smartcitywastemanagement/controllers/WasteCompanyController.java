@@ -87,8 +87,11 @@ public class WasteCompanyController {
 
     @PostMapping("/cleaning-paths")
     @PreAuthorize("hasRole('ADMIN_AZIENDA')")
-    public ResponseEntity<List<Route>> saveCleaningPaths(@RequestBody List<String> binIds) {
+    public ResponseEntity<List<Route>> saveCleaningPaths(@RequestBody Map<String, Object> requestData) {
         try {
+            List<String> binIds = (List<String>) requestData.get("binIds");
+            String pathName = (String) requestData.get("pathName");
+
             // Mantieni l'ordine degli ID dei cassonetti selezionati
             LinkedHashMap<String, Bin> selectedBinsMap = new LinkedHashMap<>();
             for (String binId : binIds) {
@@ -100,7 +103,7 @@ public class WasteCompanyController {
             List<Bin> selectedBins = new ArrayList<>(selectedBinsMap.values());
 
             // Genera le rotte di pulizia basate sui cassonetti selezionati
-            List<Route> cleaningPaths = cleaningPathService.generateRoutes(selectedBins);
+            List<Route> cleaningPaths = cleaningPathService.generateRoutes(selectedBins, pathName);
 
             // Salva le rotte generate e restituiscile al frontend
             List<Route> savedRoutes = cleaningPathService.saveRoutes(cleaningPaths);
@@ -113,7 +116,6 @@ public class WasteCompanyController {
         }
     }
 
-
     @GetMapping("/get-cleaning-paths")
     @PreAuthorize("hasRole('ADMIN_AZIENDA')")
     public ResponseEntity<?> getAllCleaningPaths() {
@@ -125,9 +127,10 @@ public class WasteCompanyController {
                 Bin bin = binService.getBinById(route.getBinId());
                 if (bin != null) {
                     Map<String, Object> routeMap = new HashMap<>();
+                    routeMap.put("id", route.getId());
                     routeMap.put("binId", bin.getId());
                     routeMap.put("binLocation", bin.getLocation());
-                    routeMap.put("position", route.getPosition());
+                    routeMap.put("pathName", route.getPathName());
                     routeDTOs.add(routeMap);
                 }
             }
@@ -137,6 +140,24 @@ public class WasteCompanyController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @DeleteMapping("/delete/{cleaningPathName}")
+    @PreAuthorize("hasAnyRole('ADMIN','ADMIN_AZIENDA')")
+    public ResponseEntity<?> deleteCleaningPath(@PathVariable String cleaningPathName) {
+        try {
+            cleaningPathService.deleteCleaningPathByName(cleaningPathName);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Percorso eliminato con successo");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            // Gestione degli altri errori interni
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Errore durante l'eliminazione del percorso di pulizia");
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
 
 

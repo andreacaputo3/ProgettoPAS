@@ -2,6 +2,7 @@ package it.unisalento.pas.smartcitywastemanagement.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import it.unisalento.pas.smartcitywastemanagement.domain.Bin;
 import it.unisalento.pas.smartcitywastemanagement.domain.CleaningPath;
@@ -17,21 +18,22 @@ public class CleaningPathService {
     @Autowired
     private RouteRepository routeRepository;
 
+    @Autowired
+    private CleaningPathRepository cleaningPathRepository;
+
     public List<CleaningPath> generateCleaningPaths(List<Bin> bins) {
         List<CleaningPath> cleaningPaths = generateSimpleCleaningPaths(bins);
 
         return cleaningPaths;
     }
 
-    public List<Route> generateRoutes(List<Bin> bins) {
+    public List<Route> generateRoutes(List<Bin> bins, String pathName) {
         List<Route> routes = new ArrayList<>();
-        int position = 0;
         for (Bin bin : bins) {
             Route route = new Route();
             route.setBinId(bin.getId());
-            route.setPosition(position);
+            route.setPathName(pathName);
             routes.add(route);
-            position++;
         }
         return routes;
     }
@@ -40,8 +42,8 @@ public class CleaningPathService {
         return routeRepository.saveAll(routes);
     }
 
-    public List<Route> getRoutesByBinId(String binId) {
-        return routeRepository.findByBinId(binId);
+    public void deleteCleaningPathByName(String cleaningPathName) {
+        routeRepository.deleteByPathName(cleaningPathName);
     }
 
     private List<CleaningPath> generateSimpleCleaningPaths(List<Bin> bins) {

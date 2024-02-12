@@ -26,6 +26,8 @@ export class OfficeAdminDashboardComponent {
 
   errorMessage = '';
   responseMessage = '';
+  checkResult: string = '';
+  userAwaredMessage = '';
   newBin: any = {
     location: null,
     latitude: null,
@@ -60,12 +62,32 @@ export class OfficeAdminDashboardComponent {
     let url = `${environment.apiUrl}/municipal-office/users-to-aware`;
     this.http.get<any>(url, { headers: this.getHeaders() }).subscribe({
       next: (response) => {
-        this.usersToAwareData = response;
+        this.usersToAwareData = response.usersToAwareData;
+        this.checkResult = response.message;
         this.loadingUsersToAware = false;
       },
       error: (error) => {
         console.error('Errore durante il recupero degli utenti da sensibilizzare:', error);
         this.loadingUsersToAware = false;
+      }
+    });
+  }
+
+  markUserAsAwared(userId: string): void {
+    console.log(userId);
+    this.loadingUsersToAware = true;
+    let url = `${environment.apiUrl}/municipal-office/mark-user-as-awared/${userId}`;
+    console.log(url);
+    this.http.post<any>(url, {}, { headers: this.getHeaders() }).subscribe({
+      next: (response) => {
+        this.userAwaredMessage = "Cittadino contrassegnato come sensibilizzato.";
+        this.loadingUsersToAware = false;
+        this.getUsersToAware();
+
+      },
+      error: (error) => {
+        console.error('Errore durante il contrassegno dell\'utente come sensibilizzato:', error);
+        // Gestisci l'errore in base alle tue esigenze
       }
     });
   }
@@ -198,6 +220,7 @@ export class OfficeAdminDashboardComponent {
   }
 
   private resetData(): void {
+    this.checkResult = '';
     this.loadingBinForm = false;
     this.usersToAwareData = null;
     this.paymentsStateData = null;

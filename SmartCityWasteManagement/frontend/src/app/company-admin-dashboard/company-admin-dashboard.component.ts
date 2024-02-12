@@ -14,12 +14,16 @@ export class CompanyAdminDashboardComponent {
   overloadedBins: any[] = [];
   selectedBins: any[] = [];
   routeData: any[] = [];
+  pathName: string = '';
+  routeNameToDelete= '';
+
+  mapType = 'roadmap';
 
   loadingData: boolean = false;
 
   successMessage = '';
   successMessagePath = '';
-
+  noPathMessage = '';
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -38,6 +42,7 @@ export class CompanyAdminDashboardComponent {
           this.overloadedBins = response.overloadedBins;
           this.getAllBinLocations();
           this.successMessagePath = '';
+          this.noPathMessage = '';
           this.loadingData = false;
         },
         error: (error) => {
@@ -71,6 +76,7 @@ export class CompanyAdminDashboardComponent {
         next: (response) => {
           this.successMessage = "Cassonetto svuotato con successo!";
           this.loadingData = false;
+          this.successMessagePath = '';
         },
         error: (error) => {
           console.error('Errore durante lo svuotamento del cassonetto:', error);
@@ -86,10 +92,15 @@ export class CompanyAdminDashboardComponent {
     this.http.get<any[]>(url, { headers: this.getHeaders() })
       .subscribe({
         next: (response) => {
-          console.log('Percorsi di pulizia recuperati:', response);
-          this.routeData = response;
-          this.getAllBinLocations();
-          this.successMessagePath = '';
+          if (response && response.length > 0) {
+            this.routeData = response;
+            this.getAllBinLocations();
+            this.noPathMessage = '';
+            this.successMessagePath = '';
+          } else {
+            this.noPathMessage = 'Nessun percorso di pulizia disponibile.';
+            this.getAllBinLocations();
+          }
           this.loadingData = false;
         },
         error: (error) => {
@@ -99,15 +110,6 @@ export class CompanyAdminDashboardComponent {
       });
   }
 
-  getRouteCounter(index: number): number {
-    let counter = 0;
-    for (let i = 0; i <= index; i++) {
-      if (this.routeData[i].position === 0) {
-        counter++;
-      }
-    }
-    return counter;
-  }
 
   selectBin(bin: any): void {
     const index = this.selectedBins.findIndex(selectedBin => selectedBin.id === bin.id);
@@ -124,32 +126,60 @@ export class CompanyAdminDashboardComponent {
   removeSelectedBin(selectedBin: any): void {
     const index = this.selectedBins.findIndex(bin => bin.id === selectedBin.id);
     if (index !== -1) {
-      this.selectedBins.splice(index, 1); // Rimuovi il cassonetto dalla lista dei selezionati
-      // Aggiungi il cassonetto alla lista principale
+      // Rimuovo cassonetto dalla lista dei selezionati
+      this.selectedBins.splice(index, 1);
+      // Aggiungo cassonetto alla lista principale
       this.binsForMap.push(selectedBin);
     }
   }
 
   saveCleaningPaths(): void {
+    if (!this.pathName) {
+      alert('Inserisci il nome del percorso da cancellare');
+      return;
+    }
     this.loadingData = true;
     let url = `${environment.apiUrl}/waste-company/cleaning-paths`;
-    let binIds = this.selectedBins.map(bin => bin.id);
-    console.log("ID dei cassonetti selezionati:", binIds);
 
-    this.http.post<any>(url, binIds, { headers: this.getHeaders() })
+    let body = {
+      binIds: this.selectedBins.map(bin => bin.id),
+      pathName: this.pathName
+    };
+
+    this.http.post<any>(url, body, { headers: this.getHeaders() })
       .subscribe({
         next: (response) => {
-          console.log('Percorsi di pulizia generati:', response);
           this.resetData();
           this.getAllBinLocations();
           this.selectedBins = [];
           this.loadingData = false;
           this.successMessagePath = "Nuovo percorso di pulizia aggiunto";
+          this.pathName = '';
         },
         error: (error) => {
           console.error('Errore durante la generazione dei percorsi di pulizia:', error);
         }
       });
+  }
+
+  deleteRouteByName(): void {
+    if (!this.routeNameToDelete) {
+      alert('Inserisci il nome del percorso da cancellare');
+      return;
+    }
+    if (confirm('Sei sicuro di voler cancellare il percorso "' + this.routeNameToDelete + '"?')) {
+      let url = `${environment.apiUrl}/waste-company/delete/${this.routeNameToDelete}`;
+      this.http.delete<any>(url, { headers: this.getHeaders() }).subscribe({
+        next: (response) => {
+          this.routeNameToDelete = '';
+          this.successMessagePath = '';
+          this.getAllCleaningPaths();
+        },
+        error: (error) => {
+          console.error('Errore durante l\'eliminazione del percorso:', error);
+        }
+      });
+    }
   }
 
   private resetData(): void {

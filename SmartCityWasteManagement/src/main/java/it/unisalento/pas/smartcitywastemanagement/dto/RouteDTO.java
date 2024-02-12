@@ -3,7 +3,8 @@ package it.unisalento.pas.smartcitywastemanagement.dto;
 
 public class RouteDTO {
     private String binId;
-    private int position;
+    private String pathName;
+
 
     public String getBinId() {
         return binId;
@@ -13,11 +14,11 @@ public class RouteDTO {
         this.binId = binId;
     }
 
-    public int getPosition() {
-        return position;
+    public String getPathName() {
+        return pathName;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public void setPathName(String pathName) {
+        this.pathName = pathName;
     }
 }

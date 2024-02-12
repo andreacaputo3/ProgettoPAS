@@ -24,7 +24,6 @@ export class LoginComponent {
         localStorage.setItem('jwtToken', response.token);
         localStorage.setItem('username', this.loginData.username);
         localStorage.setItem('id', response.id);
-        console.log(response.token);
 
         // Esegui il reindirizzamento in base al ruolo
         switch (response.role) {
