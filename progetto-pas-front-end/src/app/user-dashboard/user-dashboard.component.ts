@@ -56,6 +56,10 @@ export class UserDashboardComponent {
       next: (response) => {
         this.errorMessage = '';
         this.responseMessage = 'Conferimento eseguito con successo';
+        this.disposalData.weight = '';
+        this.disposalData.wasteType = '';
+        this.locations = [];
+        this.getUserWasteSeparationPerformance();
       },
       error: (error) => {
         console.error('Errore durante il conferimento del rifiuto:', error);

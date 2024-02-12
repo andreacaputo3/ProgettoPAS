@@ -133,10 +133,6 @@ export class OfficeAdminDashboardComponent {
     });
   }
 
-  showBinForm(): void {
-    this.resetData();
-    this.loadingBinForm = true;
-  }
   createBin(): void {
     if (!this.newBin || !this.newBin.type || !this.newBin.maxWeight || !this.newBin.location || !this.newBin.longitude || !this.newBin.latitude) {
       console.error('Compilare tutti i campi prima di conferire il rifiuto.');
@@ -196,12 +192,18 @@ export class OfficeAdminDashboardComponent {
     });
   }
 
+  showBinForm(): void {
+    this.resetData();
+    this.loadingBinForm = true;
+  }
+
   private resetData(): void {
     this.loadingBinForm = false;
     this.usersToAwareData = null;
     this.paymentsStateData = null;
     this.wasteSeparationPerformanceData = null;
     this.yearlyPaymentAmountsData = null;
+    this.binsData = null;
   }
 
   private getHeaders(): HttpHeaders {

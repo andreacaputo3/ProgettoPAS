@@ -37,7 +37,7 @@ public class MunicipalOfficeService {
         List<User> users = userRepository.findByRole("USER");
 
         // Costo fisso per unità di spazzatura (in euro)
-        double costPerUnitOfWaste = 0.5; // Esempio, puoi modificare questo valore secondo le tue esigenze
+        double costPerUnitOfWaste = 0.5;
 
         // Mappa per memorizzare gli importi da pagare per ogni cittadino
         Map<String, Double> yearlyPaymentAmounts = new HashMap<>();

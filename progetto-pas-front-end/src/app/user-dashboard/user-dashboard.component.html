@@ -21,7 +21,7 @@
             <div class="card-body">
               <p class="card-text">Importo (€): {{ payment.amount }}</p>
               <p class="card-text">Data Emissione: {{ payment.emissionDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
-              <p class="card-text">Data Pagamento: {{ payment.paymentDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+              <p *ngIf="payment.paymentDate" class="card-text">Data Pagamento: {{ payment.paymentDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
               <p class="card-text">Stato Pagamento: <span [ngClass]="{'text-success': payment.paid, 'text-danger': !payment.paid}">{{ payment.paid ? 'Pagato' : 'Non Pagato' }}</span></p>
               <button *ngIf="!payment.paid" class="btn btn-primary btn-sm" (click)="payPayment(payment.id)">Paga</button>
             </div>

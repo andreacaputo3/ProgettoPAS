@@ -59,4 +59,11 @@ public class BinService {
         }
     }
 
+    public List<Bin> getBinsByIds(List<String> binIds) {
+        return binRepository.findAllById(binIds);
+    }
+
+    public Bin getBinById(String binId) {
+        return binRepository.findById(binId).orElse(null);
+    }
 }

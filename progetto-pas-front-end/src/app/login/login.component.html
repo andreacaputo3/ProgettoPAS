@@ -1,9 +1,11 @@
-<div class="container">
-  <div class="row justify-content-center mt-5">
+<div class="container mt-5">
+  <div class="row justify-content-center">
     <div class="col-md-6">
       <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+          <h2 class="text-center m-0">Login</h2>
+        </div>
         <div class="card-body">
-          <h2 class="card-title text-center mb-4">Login</h2>
           <form (ngSubmit)="login()">
             <div class="form-group">
               <label for="username">Username</label>
@@ -12,15 +14,16 @@
             <div class="form-group">
               <label for="password">Password</label>
               <input type="password" class="form-control" id="password" placeholder="Inserisci la tua password" [(ngModel)]="loginData.password" name="password" required>
+              <p></p>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Accedi</button>
+            <p></p>
           </form>
           <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+          <div class="mt-3 text-center">
+            <a routerLink="/" class="btn btn-link"><i class="bi bi-arrow-left"></i> Torna alla Home</a>
+          </div>
         </div>
-      </div>
-
-      <div class="mt-3 text-center">
-        <a routerLink="/" class="btn btn-link"><i class="bi bi-arrow-left"></i> Torna alla Home</a>
       </div>
     </div>
   </div>

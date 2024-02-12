@@ -50,13 +50,20 @@ public class UserRestController {
 
 
     @GetMapping("/")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAll() {
         List<User> users = userRepository.findAll();
         List<UserDTO> userDTOs = users.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(userDTOs, HttpStatus.OK);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "PROVA");
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/get-all")
@@ -131,6 +138,9 @@ public class UserRestController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDTO) {
+        System.out.println(loginDTO.getUsername());
+        System.out.println(loginDTO.getPassword());
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -138,8 +148,9 @@ public class UserRestController {
                             loginDTO.getPassword()
                     )
             );
-
+            System.out.println("ciao2");
             User authenticatedUser = userRepository.findByUsername(authentication.getName());
+            System.out.println("ciao3");
 
             if (authenticatedUser != null) {
                 var jwtToken = jwtUtilities.generateToken(authenticatedUser.getUsername());
@@ -153,6 +164,7 @@ public class UserRestController {
                 throw new UserNotFoundException(loginDTO.getUsername());
             }
         } catch (AuthenticationException e) {
+            System.out.println(e.getMessage());
             return new ResponseEntity<>("Login non riuscito: credenziali non valide", HttpStatus.UNAUTHORIZED);
         }
     }

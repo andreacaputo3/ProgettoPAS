@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row justify-content-between align-items-center">
       <div class="col-auto">
-        <h1 class="m-0">Benvenuto, <span class="text-light">{{ localStorage.getItem('username') }}</span></h1>
+        <h1 class="m-0">Benvenuto, <span class="text-dark">{{ localStorage.getItem('username') }}</span></h1>
       </div>
       <div class="col-auto">
         <button class="btn btn-danger" (click)="logout()">Logout</button>
@@ -15,13 +15,26 @@
   <p class="lead text-center">Accedi alle sezioni dedicate premendo i pulsanti sottostanti.</p>
 
   <div class="button-container mt-4 mb-4">
-    <button class="btn btn-primary mr-2" (click)="checkWasteDisposals()">Verifica stato cassonetti</button>
-    <button class="btn btn-primary mr-2" (click)="getBinsForMap()">Recupera cassonetti per la mappa</button>
-    <button class="btn btn-primary" (click)="instantiateCleaningPaths()">Istanza percorsi di pulizia</button>
+    <button class="btn btn-primary custom-btn" (click)="checkWasteDisposals()">Verifica stato cassonetti</button>
+    <button class="btn btn-primary custom-btn" (click)="getAllCleaningPaths()">Recupera tutti i percorsi di pulizia</button>
   </div>
 
   <div *ngIf="loadingData" class="loading-container">
     <p class="alert alert-info">Caricamento in corso...</p>
+  </div>
+
+  <div *ngIf="routeData && routeData.length > 0" class="route-container mt-4">
+    <h3>Percorsi di pulizia:</h3>
+    <div class="card-deck">
+      <ng-container *ngFor="let route of routeData; let i = index">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title" *ngIf="route.position === 0 || i === 0">Percorso: {{ getRouteCounter(i) }}</h5>
+            <p class="card-text">Location: {{ route.binLocation }}</p>
+          </div>
+        </div>
+      </ng-container>
+    </div>
   </div>
 
   <div *ngIf="checkResult" class="result-container">
@@ -34,49 +47,33 @@
       <li *ngFor="let bin of overloadedBins" class="list-group-item d-flex justify-content-between align-items-center">
         {{ bin.location }}
         <button class="btn btn-primary" (click)="emptyBin(bin.id)">Svuota</button>
-        <div *ngIf="successMessage " class="alert alert-success">Cassonetto svuotato con successo!</div>
+        <div *ngIf="successMessage " class="alert alert-success">{{ successMessage }}</div>
       </li>
     </ul>
   </div>
 
-  <div class="data-container mt-4">
-    <ng-container *ngIf="binsForMap && binsForMap.length > 0">
-      <h3 class="mt-4">Cassonetto attivo:</h3>
-      <div class="map-container">
-        <div class="row">
-          <div class="col-md-4" *ngFor="let bin of binsForMap">
-            <div class="card mb-4">
-              <div class="card-body">
-                <p class="card-text">Posizione: {{ bin.location }}</p>
-                <p class="card-text">Latitudine: {{ bin.latitude }}</p>
-                <p class="card-text">Longitudine: {{ bin.longitude }}</p>
-                <p class="card-text">Stato: {{ bin.status }}</p>
-              </div>
-            </div>
-          </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3>Lista di tutti i cassonetti:</h3>
+      <div class="card" *ngFor="let bin of binsForMap">
+        <div class="card-body">
+          <p class="card-text">Posizione: {{ bin.location }}</p>
+          <button class="btn btn-primary" (click)="selectBin(bin)">Seleziona</button>
         </div>
       </div>
-    </ng-container>
-
-    <ng-container *ngFor="let path of cleaningPaths">
-      <h3 class="mt-4">Percorsi di Pulizia</h3>
-      <div class="cleaning-path-container">
-        <div class="card">
-          <div class="card-body">
-            <p class="card-text">Distanza: {{ path.distance }}</p>
-            <b><p class="card-text">Cassonetto di Partenza:</p></b>
-            <p></p>
-            <p class="card-text">Posizione: {{ path.startBin.location }}</p>
-            <p class="card-text">Latitudine: {{ path.startBin.latitude }}</p>
-            <p class="card-text">Longitudine: {{ path.startBin.longitude }}</p>
-            <b><p class="card-text">Cassonetto di Arrivo:</p></b>
-            <p></p>
-            <p class="card-text">Posizione: {{ path.endBin.location }}</p>
-            <p class="card-text">Latitudine: {{ path.endBin.latitude }}</p>
-            <p class="card-text">Longitudine: {{ path.endBin.longitude }}</p>
-          </div>
+    </div>
+    <div class="col-md-6">
+      <h3>Cassonetti selezionati:</h3>
+      <div class="card" *ngFor="let selectedBin of selectedBins">
+        <div class="card-body">
+          <p class="card-text">Posizione: {{ selectedBin.location }}</p>
+          <button class="btn btn-danger" (click)="removeSelectedBin(selectedBin)">Rimuovi</button>
         </div>
       </div>
-    </ng-container>
+      <button class="btn btn-primary" (click)="saveCleaningPaths()">Salva ordine e genera percorsi di pulizia</button>
+      <div *ngIf="successMessagePath " class="alert alert-success"> {{ successMessagePath }} </div>
+    </div>
+    <p></p>
   </div>
+
 </div>

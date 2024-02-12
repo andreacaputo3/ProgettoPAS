@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row justify-content-between align-items-center">
       <div class="col-auto">
-        <h1 class="m-0">Benvenuto, <span class="text-light">{{ localStorage.getItem('username') }}</span></h1>
+        <h1 class="m-0">Benvenuto, <span class="text-dark">{{ localStorage.getItem('username') }}</span></h1>
       </div>
       <div class="col-auto">
         <button class="btn btn-danger" (click)="logout()">Logout</button>
@@ -16,38 +16,21 @@
     <div class="col-md-8">
       <p class="lead text-center">Accedi alle sezioni dedicate premendo i pulsanti sottostanti.</p>
       <div class="button-container mt-4 mb-4">
-        <button class="btn btn-primary mr-4" (click)="getUsersToAware()" [disabled]="loadingUsersToAware">Cittadini da sensibilizzare</button>
-        <button class="btn btn-primary mr-4" (click)="getPaymentsState()" [disabled]="loadingPaymentsState">Stato dei pagamenti</button>
-        <button class="btn btn-primary mr-4" (click)="getWasteSeparationPerformance()" [disabled]="loadingWasteSeparationPerformance">Performance di separazione dei rifiuti</button>
-        <button class="btn btn-primary mr-4" (click)="calculateYearlyPaymentAmounts()" [disabled]="loadingYearlyPaymentAmounts">Calcola pagamenti annuali</button>
-        <button class="btn btn-primary mr-4" (click)="erogateYearlyPayments()" [disabled]="loadingYearlyPaymentAmounts">Eroga Pagamenti Annuali</button>
-        <button class="btn btn-primary mr-4" (click)="showBinForm()" [disabled]="loadingBinForm">Aggiungi Cassonetto</button>
-        <button class="btn btn-primary mr-4" (click)="getAllBinLocations()" [disabled]="loadingBinForm">Visualizza Posizioni Cassonetti</button>
+        <button class="btn btn-primary custom-btn" (click)="getUsersToAware()" [disabled]="loadingUsersToAware">Cittadini da sensibilizzare</button>
+        <button class="btn btn-primary custom-btn" (click)="getPaymentsState()" [disabled]="loadingPaymentsState">Stato dei pagamenti</button>
+        <button class="btn btn-primary custom-btn" (click)="getWasteSeparationPerformance()" [disabled]="loadingWasteSeparationPerformance">Performance di separazione dei rifiuti</button>
+        <button class="btn btn-primary custom-btn" (click)="calculateYearlyPaymentAmounts()" [disabled]="loadingYearlyPaymentAmounts">Calcola pagamenti annuali</button>
+        <button class="btn btn-primary custom-btn" (click)="erogateYearlyPayments()" [disabled]="loadingYearlyPaymentAmounts">Eroga Pagamenti Annuali</button>
+        <button class="btn btn-primary custom-btn" (click)="showBinForm()" [disabled]="loadingBinForm">Aggiungi Cassonetto</button>
+        <button class="btn btn-primary custom-btn" (click)="getAllBinLocations()" [disabled]="loadingBins">Visualizza Posizioni Cassonetti</button>
       </div>
     </div>
   </div>
 
-  <div *ngIf="usersData" class="user-container mt-4">
-    <h2>Lista Cittadini</h2>
-    <div class="row">
-      <div class="col-md-6" *ngFor="let user of usersData">
-        <div class="card mb-3">
-          <div class="card-body">
-            <p class="card-text">Nome: {{ user.name }}</p>
-            <p class="card-text">Cognome: {{ user.surname }}</p>
-            <p class="card-text">Email: {{ user.mail }}</p>
-            <p class="card-text">Età: {{ user.age }}</p>
-            <p class="card-text">Username: {{ user.username }}</p>
-            <button class="btn btn-danger" (click)="deleteUser(user.id)">Elimina</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <div class="row justify-content-center">
     <div class="col-md-8">
-      <div *ngIf="loadingUsersToAware || loadingPaymentsState || loadingWasteSeparationPerformance || loadingYearlyPaymentAmounts || loadingBins || loadingBinForm" class="loading-container">
+      <div *ngIf="loadingUsersToAware || loadingPaymentsState || loadingWasteSeparationPerformance || loadingYearlyPaymentAmounts || loadingBins" class="loading-container">
         <p class="alert alert-info">Caricamento in corso...</p>
       </div>
 
@@ -166,22 +149,39 @@
           <button type="submit" class="btn btn-primary mt-3">Inserisci</button>
         </form>
       </div>
-    </div>
 
-    <div *ngIf="binsData" class="user-container mt-4">
-      <h2>Cassonetti attivi</h2>
-      <div class="row">
-        <div class="col-md-6" *ngFor="let bin of binsData">
-          <div class="card mb-3">
-            <div class="card-body">
-              <p class="card-text">Posizione: {{ bin.location }}</p>
-              <p class="card-text">Type: {{ bin.type }}</p>
-              <p class="card-text">Max Weight (Kg): {{ bin.maxWeight }}</p>
+      <div *ngIf="binsData" class="user-container mt-4">
+        <h2>Cassonetti attivi</h2>
+        <div class="row">
+          <div class="col-md-6" *ngFor="let bin of binsData">
+            <div class="card mb-3">
+              <div class="card-body">
+                <p class="card-text">Posizione: {{ bin.location }}</p>
+                <p class="card-text">Type: {{ bin.type }}</p>
+                <p class="card-text">Max Weight (Kg): {{ bin.maxWeight }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="usersData" class="user-container mt-4">
+        <h2>Lista Cittadini</h2>
+        <div class="row">
+          <div class="col-md-6" *ngFor="let user of usersData">
+            <div class="card mb-3">
+              <div class="card-body">
+                <p class="card-text">Nome: {{ user.name }}</p>
+                <p class="card-text">Cognome: {{ user.surname }}</p>
+                <p class="card-text">Email: {{ user.mail }}</p>
+                <p class="card-text">Età: {{ user.age }}</p>
+                <p class="card-text">Username: {{ user.username }}</p>
+                <button class="btn btn-danger" (click)="deleteUser(user.id)">Elimina</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </div>

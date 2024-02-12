@@ -5,15 +5,43 @@ import java.util.List;
 
 import it.unisalento.pas.smartcitywastemanagement.domain.Bin;
 import it.unisalento.pas.smartcitywastemanagement.domain.CleaningPath;
+import it.unisalento.pas.smartcitywastemanagement.domain.Route;
+import it.unisalento.pas.smartcitywastemanagement.repositories.CleaningPathRepository;
+import it.unisalento.pas.smartcitywastemanagement.repositories.RouteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CleaningPathService {
 
+    @Autowired
+    private RouteRepository routeRepository;
+
     public List<CleaningPath> generateCleaningPaths(List<Bin> bins) {
         List<CleaningPath> cleaningPaths = generateSimpleCleaningPaths(bins);
 
         return cleaningPaths;
+    }
+
+    public List<Route> generateRoutes(List<Bin> bins) {
+        List<Route> routes = new ArrayList<>();
+        int position = 0;
+        for (Bin bin : bins) {
+            Route route = new Route();
+            route.setBinId(bin.getId());
+            route.setPosition(position);
+            routes.add(route);
+            position++;
+        }
+        return routes;
+    }
+
+    public List<Route> saveRoutes(List<Route> routes) {
+        return routeRepository.saveAll(routes);
+    }
+
+    public List<Route> getRoutesByBinId(String binId) {
+        return routeRepository.findByBinId(binId);
     }
 
     private List<CleaningPath> generateSimpleCleaningPaths(List<Bin> bins) {
@@ -58,4 +86,9 @@ public class CleaningPathService {
 
         return distance;
     }
+
+    public List<Route> getAllRoutes() {
+        return routeRepository.findAll();
+    }
+
 }
